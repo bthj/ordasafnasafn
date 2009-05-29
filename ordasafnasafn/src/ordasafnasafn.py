@@ -43,51 +43,85 @@ class Search(webapp.RequestHandler):
     
 class SearchInput(Search):
     def get(self):
+        #http://code.google.com/appengine/docs/python/tools/webapp/requestdata.html
         self.response.out.write("""
           <html>
             <body>
-              <form action="/ritmalaskra" method="get">
-                <div><input type="text" value="" name="q"/></div>
+              <form action="/" method="get">
+                <div>
+                    <input type="text" value="" name="q"/>
+                    <select name="ordasofn" multiple="true">
+                        <option value="SearchHugtakasafn">Hugtakasafn &THORN;&yacute;&eth;ingami&eth;st&ouml;&eth;var utanr&iacute;kisr&aacute;uneytis</option>
+                        <option value="SearchIsmal">Or&eth;abanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var</option>
+                        <option value="SearchTos">T&ouml;lvuor&eth;asafn</option>
+                        <option value="SearchHafro">Sj&aacute;vard&yacute;raor&eth;ab&oacute;k</option>
+                        <option value="SearchMalfar">M&aacute;lfarsbanki &Iacute;slenskrar m&aacute;lst6ouml;&eth;var</option>
+                        <option value="SearchRitmalaskra">Ritm&aacute;lssafn Or&eth;ab&oacute;kar H&aacute;sk&oacute;lans</option>
+                        <option value="SearchBin">Beygingarl&yacute;sing &iacute;slensks n&uacute;t&iacute;mam&aacute;ls</option>
+                    </select>
+                </div>
                 <div><input type="submit" value="Leita"></div>
               </form>
             </body>
-          </html>""")    
+          </html>""")
+        
+        query = self.getSearchString()
+        if query != '':
+            valinOrdasofn = self.request.get("ordasofn", allow_multiple=True)
+            html = '<hr />'
+            for ordasafn in valinOrdasofn:
+                classMethodExecution = ''.join([ordasafn, '.doSearch(\'', query, '\')'])
+                oneSearchResult = eval(classMethodExecution)
+                html = ''.join([html, oneSearchResult, "<hr />" ])
+            self.response.out.write(html)
 
 class SearchHugtakasafn(Search):
     base_url = "http://hugtakasafn.utn.stjr.is/"
     search_params = {"tungumal" : "oll"}
     filter_pattern = "<dl>(.*)</dl>"
+    html_heading = """<p><a href="http://hugtakasafn.utn.stjr.is/" target="_blank">Hugtakasafn &THORN;&yacute;&eth;ingami&eth;st&ouml;&eth;var utanr&iacute;kisr&aacute;&eth;uneytis</a></p>"""
     def get(self):
-        ### Search.get(self)
-        self.search_params["leitarord"] = self.getSearchString()
-        search_url = self.base_url + "leit-nidurstodur.adp"
-        search_results = self.getSearch(search_url, urllib.urlencode(self.search_params)).decode('iso-8859-1')
-        html = self.filterSearch(self.filter_pattern, search_results)[0]
+        html = self.doSearch( self.getSearchString() )
+        self.response.out.write( html )
+    @classmethod
+    def doSearch(cls, searchString):
+        search_params = {"leitarord" : searchString}
+        search_params.update( cls.search_params )
+        search_url = cls.base_url + "leit-nidurstodur.adp"
+        search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+        return cls.renderHTML(search_results)
+    @classmethod
+    def renderHTML(cls, search_results):
+        html = cls.filterSearch(cls.filter_pattern, search_results)[0]
         if len(html) > 1:
-            html = self.addTargetToLinks(html)
-            html = "<dl>" + self.addBaseUrlToLinks(self.base_url, html) + "</dl>"
+            html = cls.addTargetToLinks(html)
+            html = "<dl>" + cls.addBaseUrlToLinks(cls.base_url, html) + "</dl>"
         else:
-            html = "<h1>Ekkert fannst</h1>"
-        self.response.out.write(html)
-        
+            html = "<p>Ekkert fannst</p>"
+        return ''.join([cls.html_heading, html])
+            
 class SearchIsmal(Search):
-    base_url = "http://www.ordabanki.ismal.hi.is/"
+    base_url = "http://ordabanki.ismal.hi.is/"
+    html_heading = """<p><a href="http://ordabanki.ismal.hi.is/" target="_blank">Or&eth;abanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var</a></p>"""
     #filter_pattern = "Listi yfir niðurstöður byrjar.*?<td.*?>(.*?</table>).*Listi yfir niðurstöður endar"
     def get(self):
-        ### Search.get(self)
+        html = self.doSearch( self.getSearchString() )
+        self.response.out.write(html)
+    @classmethod
+    def doSearch(cls, searchString):
         html = ""
-        search_url = self.base_url + "searchxml"
-        search_params = {"searchphrase" : "*" +self.getSearchString() + "*"}
+        search_url = cls.base_url + "searchxml"
+        search_params = {"searchphrase" : "*" + searchString.decode('utf-8') + "*"}
         for lang in ["IS", "EN"]:
             search_params["searchlanguage"] = lang
-            search_results = self.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
-            html += self.renderHTML(search_results, self.getSearchString())
+            search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+            html += cls.renderHTML(search_results, searchString)
             #html += search_results
         if len(html) > 0:
-            html = self.addTargetToLinks(html)
+            html = cls.addTargetToLinks(html)
         else:
-            html = "<h1>Ekkert fannst</h1>"
-        self.response.out.write(html)
+            html = "<p>Ekkert fannst</p>"
+        return ''.join([cls.html_heading, html])        
     @classmethod
     def renderHTML(cls, xml, searchstring):
         # a proper xml parser might have been a good idea here but now i won't bothered mucking with one
@@ -104,11 +138,11 @@ class SearchIsmal(Search):
         term_url_matcher = re.compile("dictionary.*?>.*?</dictionary>.*<url>.*http://herdubreid.rhi.hi.is:1026/wordbank/(.*?)</url>", re.I | re.S | re.M)
         searchstring_matcher = re.compile("("+searchstring+")", re.I)
         lang_map = {
-            "DK" : "danska", "EN" : "enska", "SF" : "finnska", "FR" : "franska", "FO" : "f�reyska", "GL" : "gr�nlenska", "NL" : "hollenska", "EI" : "�rska", "IS" : "�slenska", "IT" : "�talska", "JP" : "japanska", "LA" : "lat�na", "NOB" : "norskt b�km�l", "NN" : "n�norska", "PT" : "port�galska", "RU" : "r�ssneska", "SM" : "sam�ska", "ES" : "sp�nska", "SV" : "s�nska", "DE" : "��ska"
+            "DK" : "danska", "EN" : "enska", "SF" : "finnska", "FR" : "franska", "FO" : "f&aelig;reyska", "GL" : "gr&aelig;nlenska", "NL" : "hollenska", "EI" : "&iacute;rska", "IS" : "&iacute;slenska", "IT" : "&iacute;talska", "JP" : "japanska", "LA" : "lat&iacute;na", "NOB" : "norskt b&oacute;km&aacute;l", "NN" : "n&yacute;norska", "PT" : "port&uacute;galska", "RU" : "r&uacute;ssneska", "SM" : "sam&iacute;ska", "ES" : "sp&aelig;nska", "SV" : "s&aelig;nska", "DE" : "&thorn;&yacute;ska"
         }
         
         searchlanguage = searchlanguage_matcher.search(xml).group(1)
-        dl = "<h2>leitarm�l: " + lang_map[searchlanguage] + "</h2><dl>"
+        dl = "<h2>leitarm&aacute;l: " + lang_map[searchlanguage] + "</h2><dl>"
         term_count = 0
         for term in term_matcher.findall(xml):
             term_url = cls.base_url + term_url_matcher.search(term).group(1)
@@ -116,6 +150,8 @@ class SearchIsmal(Search):
             dictionary_name = name_matcher.search(dictionary).group(1)
             if url_matcher.search(dictionary):
                 dictionary_url = url_matcher.search(dictionary).group(1)
+            else:
+                dictionary_url = None
             dt = ""
             dd = ""
             for word in word_entry_matcher.findall(term):
@@ -148,13 +184,16 @@ class SearchIsmal(Search):
 class SearchTos(Search):
     base_url = "http://tos.sky.is"
     filter_pattern = """<span class="search_string">.*?<br /><br />(.*)</p>"""
+    html_heading = """<p><a href="http://tos.sky.is/" target="_blank">T&ouml;lvuor&eth;asafn</a></p>"""
     def get(self):
-        search_url = self.base_url + "/tos/to/search/"
-        search_params = "srch_string=*" + urllib.quote(self.getSearchString().encode('utf-8')) + "*"
-        #search_params = {"srch_string" : "*" + self.getSearchString() + "*"}
-        search_results = self.getSearch(search_url, search_params)
-        html = self.renderHTML(search_results)
+        html = self.doSearch( self.getSearchString() )
         self.response.out.write(html)
+    @classmethod
+    def doSearch(cls, searchString):
+        search_url = cls.base_url + "/tos/to/search/"
+        search_params = "srch_string=*" + urllib.quote(searchString) + "*"
+        search_results = cls.getSearch(search_url, search_params)
+        return cls.renderHTML(search_results).decode('utf-8')
     @classmethod
     def renderHTML(cls, search_results):
         html = cls.filterSearch(cls.filter_pattern, search_results)[0]
@@ -167,33 +206,42 @@ class SearchTos(Search):
             div.replaceWith(li)
         ul = Tag(soup, "ul")
         ul.insert(0, soup)
-        return str(ul)
+        return ''.join([ cls.html_heading, str(ul) ])
 
 class SearchHafro(Search):
     base_url = "http://www.hafro.is/ordabok/"
     search_params = {"op" : "search"}
     def get(self):
-        self.search_params["qstr"] = "%" + self.getSearchString() + "%"
-        search_results = self.postSearch(self.base_url, urllib.urlencode(self.search_params)).decode('iso-8859-1')
-        html = self.renderHTML(search_results)
+        html = self.doSearch( self.getSearchString() )
         self.response.out.write(html)
+    @classmethod
+    def doSearch(cls, searchString):
+        search_params = {"qstr" : "%" + searchString + "%"}
+        search_params.update( cls.search_params )
+        search_results = cls.postSearch(cls.base_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+        return cls.renderHTML(search_results)        
     @classmethod
     def renderHTML(cls, search_results):
         html = cls.addTargetToLinks(search_results)
         html = cls.addBaseUrlToLinks(cls.base_url, html)
         soup = BeautifulSoup(html)
-        soup.dl.form.extract()
-        return soup.body.renderContents()
+        soup.form.extract()
+        return re.sub('<h1>(Or.*?k) (.*)</h1>', 
+                      '''<p><a href="http://www.hafro.is/ordabok/" target="_blank">Sj&aacute;vard&yacute;raor&eth;ab&oacute;k</a>:  \\2</p>''', 
+                      soup.body.renderContents() )
     
 class SearchMalfar(Search):
     # fors��a: http://www.arnastofnun.is/page/arnastofnun_gagnasafn_malfarsbankinn
     base_url = "http://www.ismal.hi.is/cgi-bin/malfar/leita"
     filter_pattern = """<br>.*?<hr>.*?<br>(.*)<br>.*?<br>.*?<hr>"""
     def get(self):
-        search_params = {"ord" : self.getSearchString()}
-        search_results = self.postSearch(self.base_url, urllib.urlencode(search_params)).decode('iso-8859-1')
-        html = self.renderHTML(search_results)
+        html = self.doSearch( self.getSearchString() )
         self.response.out.write(html)
+    @classmethod
+    def doSearch(cls, searchString):
+        search_params = {"ord" : searchString}
+        search_results = cls.postSearch(cls.base_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+        return cls.renderHTML(search_results)        
     @classmethod
     def renderHTML(cls, search_results):
         html = """<p><a href="http://www.arnastofnun.is/page/arnastofnun_gagnasafn_malfarsbankinn" target="_blank">M&aacute;lfarsbanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var</a></p>"""
@@ -210,18 +258,22 @@ class SearchRitmalaskra(Search):
     filter_pattern_2 = """(<table border="1" cellpadding="5">.*</table>)"""
     search_params = {"adg" : "leit"}
     def get(self):
-        search_url = self.base_url + "/cgi-bin/ritmal/leitord.cgi"
-        self.search_params["l"] = self.getSearchString()
-        search_results = self.getSearch(search_url, urllib.urlencode(self.search_params)).decode('iso-8859-1')
-        html = self.renderHTML(search_results)
+        html = self.doSearch( self.getSearchString() )
         self.response.out.write(html)
+    @classmethod
+    def doSearch(cls, searchString):
+        search_url = cls.base_url + "/cgi-bin/ritmal/leitord.cgi"
+        search_params = {"l" : searchString}
+        search_params.update( cls.search_params )
+        search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+        return cls.renderHTML(search_results)        
     @classmethod
     def renderHTML(cls, search_results):
         html_heading = """<p><a href="http://www.arnastofnun.is/page/arnastofnun_gagnasafn_ritmal" target="_blank">Ritm&aacute;lssafn Or&eth;ab&oacute;kar H&aacute;sk&oacute;lans</a></p>"""
         filtered_search = cls.filterSearch(cls.filter_pattern_1, search_results)
         html  = ""
         if len(filtered_search) > 0:
-            html = filtered_search[0][1] + "<br /><br />" + filtered_search[0][0] 
+            html = filtered_search[0][0] + "<br /><br />" + filtered_search[0][1] 
         else:
             filtered_search = cls.filterSearch(cls.filter_pattern_2, search_results)
             if len(filtered_search) > 0:
@@ -232,6 +284,30 @@ class SearchRitmalaskra(Search):
         html = cls.addBaseUrlToLinks(cls.base_url, html)
         html = html_heading + html
         return html
+    
+class SearchBin(Search):
+    base_url = "http://bin.arnastofnun.is/"
+    filter_pattern = """<div id="main">(.*)<center>.*?<form>"""
+    search_params = {"ordmyndir" : "on"}
+    def get(self):
+        html = self.doSearch( self.getSearchString() )
+        self.response.out.write(html)
+    @classmethod
+    def doSearch(cls, searchString):
+        search_url = cls.base_url + "leit.php"
+        search_params = {"q" : searchString + "%"}
+        search_params.update( cls.search_params )
+        search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('utf-8')
+        return cls.renderHTML(search_results)
+    @classmethod
+    def renderHTML(cls, search_results):
+        html_heading = """<p><a href="http://bin.arnastofnun.is/" target="_blank">Beygingarl&yacute;sing &iacute;slensks n&uacute;t&iacute;mam&aacute;ls</a></p>"""
+        filtered_search = cls.filterSearch(cls.filter_pattern, search_results)
+        html = filtered_search[0]
+        html = re.sub(r'<h2>.*</h2>', '', html)
+        html = cls.addTargetToLinks(html)
+        html = cls.addBaseUrlToLinks(cls.base_url, html)
+        return html_heading + html
 
 logging.getLogger().setLevel(logging.DEBUG)
 application = webapp.WSGIApplication([
@@ -241,15 +317,9 @@ application = webapp.WSGIApplication([
                                       ('/tos', SearchTos),
                                       ('/hafro', SearchHafro),
                                       ('/malfar', SearchMalfar),
-                                      ('/ritmalaskra', SearchRitmalaskra)
+                                      ('/ritmalaskra', SearchRitmalaskra),
+                                      ('/bin', SearchBin)
                                       ], debug=True)
-
-
-# http://tos.sky.is/tos/
-# http://www.hafro.is/ordabok/
-# http://www.arnastofnun.is/page/arnastofnun_gagnasafn_malfarsbankinn
-# http://www.biblian.is/
-# http://www.arnastofnun.is/page/arnastofnun_gagnasafn_ritmal
 
 
 def main():
