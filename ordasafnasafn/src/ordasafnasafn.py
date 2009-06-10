@@ -40,6 +40,10 @@ class Search(webapp.RequestHandler):
     @classmethod
     def addBaseUrlToLinks(cls, base_url, string):
         return re.sub("(href=[\'|\"])(.*?)([\'|\"])", "\\1"+base_url+"\\2\\3", string)
+    @classmethod
+    def strengthenSearchstring(cls, searchstring, word):
+        searchstring_matcher = re.compile("("+searchstring+")", re.I)
+        return searchstring_matcher.sub("<strong>\\1</strong>", word)
     
 class SearchInput(Search):
     def get(self):
