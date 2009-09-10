@@ -1,0 +1,45 @@
+<html>
+  <head>
+  	<title>Or&eth;asafnasafn</title>
+  </head>
+  <body>
+    <form action="/" method="get">
+      <div>
+          <input type="text" value="{{ query }}" name="q"/>
+          {# it must be possible to do things more sensibly than this repeated looping, but the basic template language doesn't seem to allow list searching (there are some extension tags on django snippets) #}
+          <select name="ordasofn" multiple="true">
+              <option value="SearchHugtakasafn"
+              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchHugtakasafn" %} selected="true"{% endifequal %}{% endfor %}>
+              	Hugtakasafn &THORN;&yacute;&eth;ingami&eth;st&ouml;&eth;var utanr&iacute;kisr&aacute;uneytis
+              </option>
+              <option value="SearchIsmal"
+              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchIsmal" %} selected="true"{% endifequal %}{% endfor %}>
+              	Or&eth;abanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var
+              </option>
+              <option value="SearchTos"
+              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchTos" %} selected="true"{% endifequal %}{% endfor %}>
+              	T&ouml;lvuor&eth;asafn
+              </option>
+              <option value="SearchHafro"
+              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchHafro" %} selected="true"{% endifequal %}{% endfor %}>
+              	Sj&aacute;vard&yacute;raor&eth;ab&oacute;k
+              </option>
+              <option value="SearchMalfar"
+              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchMalfar" %} selected="true"{% endifequal %}{% endfor %}>
+              	M&aacute;lfarsbanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var
+              </option>
+              <option value="SearchRitmalaskra"
+              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchRitmalaskra" %} selected="true"{% endifequal %}{% endfor %}>
+              	Ritm&aacute;lssafn Or&eth;ab&oacute;kar H&aacute;sk&oacute;lans
+              </option>
+              <option value="SearchBin"
+              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchBin" %} selected="true"{% endifequal %}{% endfor %}>
+              	Beygingarl&yacute;sing &iacute;slensks n&uacute;t&iacute;mam&aacute;ls
+              </option>
+          </select>
+      </div>
+      <div><input type="submit" value="Leita"></div>
+    </form>
+    {{ searchResults }}
+  </body>
+</html>

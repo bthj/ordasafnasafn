@@ -2,6 +2,7 @@ import logging
 import os
 import urllib
 import re
+from google.appengine.ext.webapp import template
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -14,8 +15,10 @@ class Search(webapp.RequestHandler):
         return self.request.get('q')
     @classmethod
     def getSearch(cls, search_url, search_params):
-        logging.error("fetching: " + search_url + "?" + search_params)
-        result = urlfetch.fetch(search_url + "?" + search_params)
+        logging.info("fetching: " + search_url + "?" + search_params)
+        result = urlfetch.fetch(url=search_url + "?" + search_params,
+                                method=urlfetch.GET, 
+                                deadline=20)
         if result.status_code == 200:
             return result.content
         else:
@@ -25,7 +28,8 @@ class Search(webapp.RequestHandler):
         result = urlfetch.fetch(url=search_url, 
                                 payload=search_params, 
                                 method=urlfetch.POST, 
-                                headers={'Content-Type': 'application/x-www-form-urlencoded'})
+                                headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                                deadline=20)
         if result.status_code == 200:
             return result.content
         else:
@@ -47,37 +51,27 @@ class Search(webapp.RequestHandler):
     
 class SearchInput(Search):
     def get(self):
-        #http://code.google.com/appengine/docs/python/tools/webapp/requestdata.html
-        self.response.out.write("""
-          <html>
-            <body>
-              <form action="/" method="get">
-                <div>
-                    <input type="text" value="" name="q"/>
-                    <select name="ordasofn" multiple="true">
-                        <option value="SearchHugtakasafn">Hugtakasafn &THORN;&yacute;&eth;ingami&eth;st&ouml;&eth;var utanr&iacute;kisr&aacute;uneytis</option>
-                        <option value="SearchIsmal">Or&eth;abanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var</option>
-                        <option value="SearchTos">T&ouml;lvuor&eth;asafn</option>
-                        <option value="SearchHafro">Sj&aacute;vard&yacute;raor&eth;ab&oacute;k</option>
-                        <option value="SearchMalfar">M&aacute;lfarsbanki &Iacute;slenskrar m&aacute;lst6ouml;&eth;var</option>
-                        <option value="SearchRitmalaskra">Ritm&aacute;lssafn Or&eth;ab&oacute;kar H&aacute;sk&oacute;lans</option>
-                        <option value="SearchBin">Beygingarl&yacute;sing &iacute;slensks n&uacute;t&iacute;mam&aacute;ls</option>
-                    </select>
-                </div>
-                <div><input type="submit" value="Leita"></div>
-              </form>
-            </body>
-          </html>""")
-        
         query = self.getSearchString()
         if query != '':
             valinOrdasofn = self.request.get("ordasofn", allow_multiple=True)
             html = '<hr />'
             for ordasafn in valinOrdasofn:
                 classMethodExecution = ''.join([ordasafn, '.doSearch(\'', query, '\')'])
-                oneSearchResult = eval(classMethodExecution)
+                try:
+                    oneSearchResult = eval(classMethodExecution)
+                except urlfetch.Error():
+                    oneSearchResult = "<h2>Leitarni&eth;urst&ouml;&eth;ur skilu&eth;u s&eacute;r ekki</h2>"
+                    continue
                 html = ''.join([html, oneSearchResult, "<hr />" ])
-            self.response.out.write(html)
+        else:
+            valinOrdasofn = []
+            html = ''
+        template_values = {
+                           'query': query,
+                           'valinOrdasofn': valinOrdasofn,
+                           'searchResults': html}
+        path = os.path.join(os.path.dirname(__file__), 'index.html')
+        self.response.out.write(template.render(path, template_values))
 
 class SearchHugtakasafn(Search):
     base_url = "http://hugtakasafn.utn.stjr.is/"
@@ -312,6 +306,10 @@ class SearchBin(Search):
         html = cls.addTargetToLinks(html)
         html = cls.addBaseUrlToLinks(cls.base_url, html)
         return html_heading + html
+
+#TODO:
+# http://elias.rhi.hi.is/rimord/
+# http://elias.rhi.hi.is/rimord/
 
 logging.getLogger().setLevel(logging.DEBUG)
 application = webapp.WSGIApplication([
