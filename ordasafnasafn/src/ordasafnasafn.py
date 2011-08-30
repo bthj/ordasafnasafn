@@ -9,6 +9,17 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import urlfetch
 
 from BeautifulSoup import BeautifulSoup, Tag
+import json
+
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+#from google.appengine.dist import use_library
+#use_library('django', '1.2')
+
+class Index(webapp.RequestHandler):
+    def get(self):
+        template_values = {}
+        path = os.path.join(os.path.dirname(__file__), 'index.html')
+        self.response.out.write(template.render(path, template_values))
 
 class Search(webapp.RequestHandler):
     def getSearchString(self):
@@ -70,14 +81,25 @@ class SearchInput(Search):
                            'query': query,
                            'valinOrdasofn': valinOrdasofn,
                            'searchResults': html}
-        path = os.path.join(os.path.dirname(__file__), 'index.html')
+        path = os.path.join(os.path.dirname(__file__), 'search-input.html')
         self.response.out.write(template.render(path, template_values))
+        
+class SearchQuery(Search):
+    def get(self):
+        query = self.getSearchString()
+        ordasafn = self.request.get('ordasafn')
+        if query != '' and ordasafn != '':
+            html = eval( ''.join([ordasafn, '.doSearch(\'', query, '\')']) )
+        else:
+            html = ''
+        self.response.headers['Content-Type'] = 'text/html'
+        self.response.out.write( html )
+
 
 class SearchHugtakasafn(Search):
     base_url = "http://hugtakasafn.utn.stjr.is/"
     search_params = {"tungumal" : "oll"}
     filter_pattern = "<dl>(.*)</dl>"
-    html_heading = """<p><a href="http://hugtakasafn.utn.stjr.is/" target="_blank">Hugtakasafn &THORN;&yacute;&eth;ingami&eth;st&ouml;&eth;var utanr&iacute;kisr&aacute;&eth;uneytis</a></p>"""
     def get(self):
         html = self.doSearch( self.getSearchString() )
         self.response.out.write( html )
@@ -87,42 +109,50 @@ class SearchHugtakasafn(Search):
         search_params.update( cls.search_params )
         search_url = cls.base_url + "leit-nidurstodur.adp"
         search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
-        return cls.renderHTML(search_results)
+        jsonResults = [ cls.renderHTML(search_results) ]
+        return json.dumps( jsonResults )
     @classmethod
     def renderHTML(cls, search_results):
         html = cls.filterSearch(cls.filter_pattern, search_results)[0]
-        if len(html) > 1:
-            html = cls.addTargetToLinks(html)
-            html = "<dl>" + cls.addBaseUrlToLinks(cls.base_url, html) + "</dl>"
-        else:
-            html = "<p>Ekkert fannst</p>"
-        return ''.join([cls.html_heading, html])
+        html = cls.addBaseUrlToLinks(cls.base_url, html)
+        html = cls.addTargetToLinks(html)
+        soup = BeautifulSoup(html)
+        jsonResult = []
+        for div in soup.findAll("div", {"class": "term"}):
+            oneResult = {}
+            oneResult["link"] = div.dt.a['href']
+            oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in div.dt.a.contents )
+            div.dt.a.extract()
+            div.dt.insert( 0, oneResult["text"] )
+            htmlResult = [ unicode( div.dt ) ]
+            for dd in div.dt.findNextSiblings("dd"):
+                htmlResult.append( unicode(dd) )
+            oneResult["html"] = ''.join( htmlResult )
+            jsonResult.append( oneResult )
+        return jsonResult
             
 class SearchIsmal(Search):
-    base_url = "http://ordabanki.ismal.hi.is/"
-    html_heading = """<p><a href="http://ordabanki.ismal.hi.is/" target="_blank">Or&eth;abanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var</a></p>"""
-    #filter_pattern = "Listi yfir niðurstöður byrjar.*?<td.*?>(.*?</table>).*Listi yfir niðurstöður endar"
+    base_url = "http://ordabanki.hi.is/wordbank/"
+    lang_map = {
+        "DK" : "danska", "EN" : "enska", "SF" : "finnska", "FR" : "franska", "FO" : "f&aelig;reyska", "GL" : "gr&aelig;nlenska", "NL" : "hollenska", "EI" : "&iacute;rska", "IS" : "&iacute;slenska", "IT" : "&iacute;talska", "JP" : "japanska", "LA" : "lat&iacute;na", "NOB" : "norskt b&oacute;km&aacute;l", "NN" : "n&yacute;norska", "PT" : "port&uacute;galska", "RU" : "r&uacute;ssneska", "SM" : "sam&iacute;ska", "ES" : "sp&aelig;nska", "SV" : "s&aelig;nska", "DE" : "&thorn;&yacute;ska"
+    }
     def get(self):
         html = self.doSearch( self.getSearchString() )
         self.response.out.write(html)
     @classmethod
     def doSearch(cls, searchString):
-        html = ""
         search_url = cls.base_url + "searchxml"
         search_params = {"searchphrase" : "*" + searchString.decode('utf-8') + "*"}
+        jsonResults = []
         for lang in ["IS", "EN"]:
             search_params["searchlanguage"] = lang
             search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
-            html += cls.renderHTML(search_results, searchString)
-            #html += search_results
-        if len(html) > 0:
-            html = cls.addTargetToLinks(html)
-        else:
-            html = "<p>Ekkert fannst</p>"
-        return ''.join([cls.html_heading, html])        
+            jsonResults.append( cls.renderHTML(search_results, searchString) )
+        jsonDump = json.dumps( jsonResults )
+        return cls.addTargetToLinks( jsonDump )        
     @classmethod
     def renderHTML(cls, xml, searchstring):
-        # a proper xml parser might have been a good idea here but now i won't bothered mucking with one
+        # a proper xml parser might have been a good idea here but now i won't bother mucking with one
         # TODO: might be better to use the Beautiful Soup library http://www.crummy.com/software/BeautifulSoup/
         term_matcher = re.compile("<term>(.*?)</term>", re.I | re.S | re.M)
         searchlanguage_matcher = re.compile("<searchlanguage>(.*?)</searchlanguage>", re.I | re.S | re.M)
@@ -132,35 +162,26 @@ class SearchIsmal(Search):
         synonym_matcher = re.compile("<synonym>(.*?)</synonym>", re.I | re.S | re.M)
         word_entry_matcher = re.compile("<word>(.*?</word>.*?)</word>", re.I | re.S | re.M)
         word_matcher = re.compile("<word>(.*?)</word>", re.I | re.S | re.M)
-        url_matcher = re.compile("<url>(.*?)</url>", re.I | re.S | re.M)
         term_url_matcher = re.compile("dictionary.*?>.*?</dictionary>.*<url>.*http://herdubreid.rhi.hi.is:1026/wordbank/(.*?)</url>", re.I | re.S | re.M)
         searchstring_matcher = re.compile("("+searchstring+")", re.I)
-        lang_map = {
-            "DK" : "danska", "EN" : "enska", "SF" : "finnska", "FR" : "franska", "FO" : "f&aelig;reyska", "GL" : "gr&aelig;nlenska", "NL" : "hollenska", "EI" : "&iacute;rska", "IS" : "&iacute;slenska", "IT" : "&iacute;talska", "JP" : "japanska", "LA" : "lat&iacute;na", "NOB" : "norskt b&oacute;km&aacute;l", "NN" : "n&yacute;norska", "PT" : "port&uacute;galska", "RU" : "r&uacute;ssneska", "SM" : "sam&iacute;ska", "ES" : "sp&aelig;nska", "SV" : "s&aelig;nska", "DE" : "&thorn;&yacute;ska"
-        }
-        
+
         searchlanguage = searchlanguage_matcher.search(xml).group(1)
-        dl = "<h2>leitarm&aacute;l: " + lang_map[searchlanguage] + "</h2><dl>"
-        term_count = 0
+        jsonResult = []
+        jsonResult.append( {"textlegend": cls.lang_map[searchlanguage]} )
         for term in term_matcher.findall(xml):
             term_url = cls.base_url + term_url_matcher.search(term).group(1)
             dictionary = dictionary_matcher.search(term).group(1)
             dictionary_name = name_matcher.search(dictionary).group(1)
-            if url_matcher.search(dictionary):
-                dictionary_url = url_matcher.search(dictionary).group(1)
-            else:
-                dictionary_url = None
+            oneResult = {}
+            oneResult["link"] = term_url
             dt = ""
             dd = ""
             for word in word_entry_matcher.findall(term):
                 language = language_matcher.search(word).group(1)
                 lang_word = word_matcher.search(word).group(1)
                 if language == searchlanguage:
-                    dt = "<dt><a href=\"" + term_url + "\">" + searchstring_matcher.sub("<strong>\\1</strong>", lang_word) + "</a>" 
-                    if dictionary_url is not None:
-                        dt += " [<a href=\"" + dictionary_url + "\">" + dictionary_name + "</a>]</dt>"
-                    else:
-                        dt += " [" + dictionary_name + "]</dt>"
+                    oneResult["text"] = lang_word
+                    dt = ''.join(["<dt>", searchstring_matcher.sub("<strong>\\1</strong>", lang_word), " [",dictionary_name,"]</dt>"])
                 else:
                     dd += "<dd>" + lang_word
                     for i, synonym in enumerate(synonym_matcher.findall(word)):
@@ -169,16 +190,11 @@ class SearchIsmal(Search):
                         if i > 0:
                             dd += ", "
                         dd += synonym
-#                    dd += " [" + lang_map[language] + "]</dd>"
-            dl += dt + dd
-            term_count += 1
-        if term_count > 0:
-            dl += "</dl>"
-        else:
-            dl = ""
-        return dl
+                    dd += " [" + cls.lang_map[language] + "]</dd>"
+            oneResult["html"] = ''.join([ dt, dd, ])
+            jsonResult.append( oneResult )
+        return jsonResult
     
-
 class SearchTos(Search):
     base_url = "http://tos.sky.is"
     filter_pattern = """<span class="search_string">.*?<br /><br />(.*)</p>"""
@@ -191,20 +207,27 @@ class SearchTos(Search):
         search_url = cls.base_url + "/tos/to/search/"
         search_params = "srch_string=*" + urllib.quote(searchString) + "*"
         search_results = cls.getSearch(search_url, search_params)
-        return cls.renderHTML(search_results).decode('utf-8')
+        jsonResults = [ cls.renderHTML(search_results) ]
+        return json.dumps( jsonResults )
+    
     @classmethod
     def renderHTML(cls, search_results):
         html = cls.filterSearch(cls.filter_pattern, search_results)[0]
         html = cls.addBaseUrlToLinks(cls.base_url, html)
         html = cls.addTargetToLinks(html)
         soup = BeautifulSoup(html)
-        for div in soup.findAll('div'):
-            li = Tag(soup, "li")
-            li.insert(0, div.strong.a)
-            div.replaceWith(li)
-        ul = Tag(soup, "ul")
-        ul.insert(0, soup)
-        return ''.join([ cls.html_heading, str(ul) ])
+        jsonResult = []
+        for div in soup.findAll("div", { "class" : "word_title" }):
+            oneResult = {}
+            if div.strong is not None:
+                if div.strong.a is not None:
+                    oneResult["link"] = div.strong.a['href']
+                    oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in div.strong.a.contents )
+                else:
+                    oneResult["link"] = ''
+                    oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in div.strong.contents )
+                jsonResult.append( oneResult )
+        return jsonResult
 
 class SearchHafro(Search):
     base_url = "http://www.hafro.is/ordabok/"
@@ -217,38 +240,54 @@ class SearchHafro(Search):
         search_params = {"qstr" : "%" + searchString + "%"}
         search_params.update( cls.search_params )
         search_results = cls.postSearch(cls.base_url, urllib.urlencode(search_params)).decode('iso-8859-1')
-        return cls.renderHTML(search_results)        
+        jsonResults = [ cls.renderHTML(search_results) ]
+        return json.dumps( jsonResults )        
     @classmethod
     def renderHTML(cls, search_results):
         html = cls.addTargetToLinks(search_results)
         html = cls.addBaseUrlToLinks(cls.base_url, html)
         soup = BeautifulSoup(html)
         soup.form.extract()
-        return re.sub('<h1>(Or.*?k) (.*)</h1>', 
-                      '''<p><a href="http://www.hafro.is/ordabok/" target="_blank">Sj&aacute;vard&yacute;raor&eth;ab&oacute;k</a>:  \\2</p>''', 
-                      soup.body.renderContents() )
-    
+        mainDl = soup.find("dl")
+        jsonResult = []
+        for h2 in mainDl.findAll("h2"):
+            oneResult = {}
+            oneResult["text"] = unicode(h2.contents[0])
+            oneResultHtml = [ oneResult["text"], '<br />' ]
+            oneResultHtml.append( h2.findNextSibling(text=True) )
+            for dt in h2.findNext("dl").findAll("dt"):
+                oneResultHtml.append( unicode(dt) )
+                oneResultHtml.append( unicode(dt.findNextSibling("dd")) )
+            oneResult["html"] = ''.join( oneResultHtml )
+            jsonResult.append(oneResult)
+        return jsonResult
+        
 class SearchMalfar(Search):
-    # fors��a: http://www.arnastofnun.is/page/arnastofnun_gagnasafn_malfarsbankinn
-    base_url = "http://www.ismal.hi.is/cgi-bin/malfar/leita"
-    filter_pattern = """<br>.*?<hr>.*?<br>(.*)<br>.*?<br>.*?<hr>"""
+    # forsida: http://www.arnastofnun.is/page/arnastofnun_gagnasafn_malfarsbankinn
+    base_url = "http://islex.lexis.hi.is/malfar/"
     def get(self):
         html = self.doSearch( self.getSearchString() )
         self.response.out.write(html)
     @classmethod
     def doSearch(cls, searchString):
-        search_params = {"ord" : searchString}
-        search_results = cls.postSearch(cls.base_url, urllib.urlencode(search_params)).decode('iso-8859-1')
-        return cls.renderHTML(search_results)        
+        search_url = cls.base_url + "leit.pl"
+        search_params = {"ord" : "*"+searchString+"*", "leita" : "Leita"}
+        search_results = cls.postSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+        jsonResults = [ cls.renderHTML(search_results) ]
+        return json.dumps( jsonResults )
     @classmethod
     def renderHTML(cls, search_results):
-        html = """<p><a href="http://www.arnastofnun.is/page/arnastofnun_gagnasafn_malfarsbankinn" target="_blank">M&aacute;lfarsbanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var</a></p>"""
-        filtered_search = cls.filterSearch(cls.filter_pattern, search_results)
-        if len(filtered_search) < 1:
-            html += "<p>Ekkert fannst</p>"
-        else:
-            html += filtered_search[0]
-        return html
+        html = cls.addTargetToLinks( search_results )
+        html = cls.addBaseUrlToLinks(cls.base_url, html)
+        soup = BeautifulSoup(html)
+        jsonResult = []
+        listi = soup.find("div", {"class": "listi"})
+        for a in listi.findAll("a"):
+            oneResult = {}
+            oneResult["link"] = a["href"]
+            oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in a.contents )
+            jsonResult.append( oneResult )
+        return jsonResult
          
 class SearchRitmalaskra(Search):
     base_url = "http://lexis.hi.is"
@@ -264,10 +303,10 @@ class SearchRitmalaskra(Search):
         search_params = {"l" : searchString}
         search_params.update( cls.search_params )
         search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
-        return cls.renderHTML(search_results)        
+        jsonResults = [ cls.renderHTML(search_results) ]
+        return json.dumps( jsonResults, indent=4 )        
     @classmethod
     def renderHTML(cls, search_results):
-        html_heading = """<p><a href="http://www.arnastofnun.is/page/arnastofnun_gagnasafn_ritmal" target="_blank">Ritm&aacute;lssafn Or&eth;ab&oacute;kar H&aacute;sk&oacute;lans</a></p>"""
         filtered_search = cls.filterSearch(cls.filter_pattern_1, search_results)
         html  = ""
         if len(filtered_search) > 0:
@@ -276,12 +315,18 @@ class SearchRitmalaskra(Search):
             filtered_search = cls.filterSearch(cls.filter_pattern_2, search_results)
             if len(filtered_search) > 0:
                 html = filtered_search[0]
-            else:
-                html = "<p>Ekkert fannst</p>"
-        html = cls.addTargetToLinks(html)
-        html = cls.addBaseUrlToLinks(cls.base_url, html)
-        html = html_heading + html
-        return html
+        jsonResult = []
+        if html is not None:
+            html = cls.addTargetToLinks(html)
+            html = cls.addBaseUrlToLinks(cls.base_url, html)
+            soup = BeautifulSoup(html)
+            word = soup.find("strong")
+            if word is not None:
+                oneResult = {}
+                oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in word.contents )
+                oneResult["html"] = html
+                jsonResult.append(oneResult)
+        return jsonResult
     
 class SearchBin(Search):
     base_url = "http://bin.arnastofnun.is/"
@@ -296,24 +341,36 @@ class SearchBin(Search):
         search_params = {"q" : searchString + "%"}
         search_params.update( cls.search_params )
         search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('utf-8')
-        return cls.renderHTML(search_results)
+        jsonResults = [ cls.renderHTML(search_results) ]
+        return json.dumps( jsonResults )
     @classmethod
     def renderHTML(cls, search_results):
-        html_heading = """<p><a href="http://bin.arnastofnun.is/" target="_blank">Beygingarl&yacute;sing &iacute;slensks n&uacute;t&iacute;mam&aacute;ls</a></p>"""
         filtered_search = cls.filterSearch(cls.filter_pattern, search_results)
         html = filtered_search[0]
         html = re.sub(r'<h2>.*</h2>', '', html)
         html = cls.addTargetToLinks(html)
         html = cls.addBaseUrlToLinks(cls.base_url, html)
-        return html_heading + html
+        soup = BeautifulSoup(html)
+        jsonResult = []
+        for li in soup.findAll("li"):
+            oneResult = {}
+            oneResult["link"] = li.strong.a["href"]
+            oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in li.strong.a.contents )
+            oneResultHtml = [ oneResult["text"],' <small>' ]
+            oneResultHtml.append( ''.join(unicode(oneElem) for oneElem in li.strong.findNextSiblings(text=True)) )
+            oneResultHtml.append( '</small>' )
+            oneResult["html"] = ''.join( oneResultHtml )
+            jsonResult.append( oneResult )
+        return jsonResult
 
 #TODO:
-# http://elias.rhi.hi.is/rimord/
 # http://elias.rhi.hi.is/rimord/
 
 logging.getLogger().setLevel(logging.DEBUG)
 application = webapp.WSGIApplication([
-                                      ('/', SearchInput),
+                                      ('/', Index),
+                                      ('/search-input', SearchInput),
+                                      ('/search', SearchQuery),
                                       ('/hugtakasafn', SearchHugtakasafn), 
                                       ('/ismal', SearchIsmal),
                                       ('/tos', SearchTos),

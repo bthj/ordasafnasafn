@@ -1,45 +1,159 @@
-<html>
-  <head>
-  	<title>Or&eth;asafnasafn</title>
-  </head>
-  <body>
-    <form action="/" method="get">
-      <div>
-          <input type="text" value="{{ query }}" name="q"/>
-          {# it must be possible to do things more sensibly than this repeated looping, but the basic template language doesn't seem to allow list searching (there are some extension tags on django snippets) #}
-          <select name="ordasofn" multiple="true">
-              <option value="SearchHugtakasafn"
-              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchHugtakasafn" %} selected="true"{% endifequal %}{% endfor %}>
-              	Hugtakasafn &THORN;&yacute;&eth;ingami&eth;st&ouml;&eth;var utanr&iacute;kisr&aacute;uneytis
-              </option>
-              <option value="SearchIsmal"
-              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchIsmal" %} selected="true"{% endifequal %}{% endfor %}>
-              	Or&eth;abanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var
-              </option>
-              <option value="SearchTos"
-              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchTos" %} selected="true"{% endifequal %}{% endfor %}>
-              	T&ouml;lvuor&eth;asafn
-              </option>
-              <option value="SearchHafro"
-              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchHafro" %} selected="true"{% endifequal %}{% endfor %}>
-              	Sj&aacute;vard&yacute;raor&eth;ab&oacute;k
-              </option>
-              <option value="SearchMalfar"
-              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchMalfar" %} selected="true"{% endifequal %}{% endfor %}>
-              	M&aacute;lfarsbanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var
-              </option>
-              <option value="SearchRitmalaskra"
-              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchRitmalaskra" %} selected="true"{% endifequal %}{% endfor %}>
-              	Ritm&aacute;lssafn Or&eth;ab&oacute;kar H&aacute;sk&oacute;lans
-              </option>
-              <option value="SearchBin"
-              {% for ordasafn in valinOrdasofn %}{% ifequal ordasafn "SearchBin" %} selected="true"{% endifequal %}{% endfor %}>
-              	Beygingarl&yacute;sing &iacute;slensks n&uacute;t&iacute;mam&aacute;ls
-              </option>
-          </select>
-      </div>
-      <div><input type="submit" value="Leita"></div>
-    </form>
-    {{ searchResults }}
-  </body>
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Orðasafnasafn</title> 
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="/static/js/oss.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
+	
+	<style type="text/css">
+		label.ui-slider {
+			width: 40%;
+		}
+	</style>
+</head> 
+
+<body>
+
+<div data-role="page" id="oss">
+
+	<div data-role="header">
+		<h1>Orða(safna(safn))</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">
+	
+		<div data-role="fieldcontain">
+			<form action="/search" method="get" id="search">
+		    <input type="search" name="q" id="query" value="" />
+		    <input type="submit" value="Leita í orðasöfnum" 
+		    	data-inline="true" data-theme="b" data-icon="search" data-iconpos="right" />
+			</form>
+		</div>
+
+		
+		<ul data-role="listview" data-inset="true" data-wordbankorder="1" data-wordbankname="Hugtakasafn" 
+				id="SearchHugtakasafn" class="wordbank">
+			<li data-role="fieldcontain">
+				<label for="hts-slider">
+					<a href="http://hugtakasafn.utn.stjr.is/" target="_blank">
+						Hugtakasafn &THORN;&yacute;&eth;ingami&eth;st&ouml;&eth;var utanr&iacute;kisr&aacute;&eth;uneytis
+					</a>
+				</label>
+				<select name="SearchHugtakasafn" id="hts-slider" data-role="slider">
+					<option value="off">Af</option>
+					<option value="on">Á</option>
+				</select>
+			</li>
+		</ul>
+		
+		<ul data-role="listview" data-inset="true" data-wordbankorder="2" data-wordbankname="Orðabanki Íslenskrar málstöðvar" 
+				id="SearchIsmal" class="wordbank">
+			<li data-role="fieldcontain">
+				<label for="ismal-slider">
+					<a href="http://ordabanki.ismal.hi.is/" target="_blank">
+						Or&eth;abanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var
+					</a>
+				</label>
+				<select name="SearchIsmal" id="ismal-slider" data-role="slider">
+					<option value="off">Af</option>
+					<option value="on">Á</option>
+				</select>
+			</li>
+		</ul>
+		
+		<ul data-role="listview" data-inset="true" data-wordbankorder="3" data-wordbankname="Tölvuorðasafn" 
+				id="SearchTos" class="wordbank">
+			<li data-role="fieldcontain" id="ismal-divider">
+				<label for="tos-slider">
+					<a href="http://tos.sky.is/" target="_blank">T&ouml;lvuor&eth;asafn</a>
+				</label>
+				<select name="SearchTos" id="tos-slider" data-role="slider">
+					<option value="off">Af</option>
+					<option value="on">Á</option>
+				</select>
+			</li>
+		</ul>
+		
+		<ul data-role="listview" data-inset="true" data-wordbankorder="4" 
+				id="SearchBin" class="wordbank">
+			<li data-role="fieldcontain" id="ismal-divider">
+				<label for="bin-slider">
+					<a href="http://bin.arnastofnun.is/" target="_blank">
+						Beygingarl&yacute;sing &iacute;slensks n&uacute;t&iacute;mam&aacute;ls
+					</a>
+				</label>
+				<select name="SearchBin" id="bin-slider" data-role="slider">
+					<option value="off">Af</option>
+					<option value="on">Á</option>
+				</select>
+			</li>
+		</ul>
+		
+		<ul data-role="listview" data-inset="true" data-wordbankorder="5" 
+				id="SearchHafro" class="wordbank">
+			<li data-role="fieldcontain" id="ismal-divider">
+				<label for="hafro-slider">
+					<a href="http://www.hafro.is/ordabok/" target="_blank">Sj&aacute;vard&yacute;raor&eth;ab&oacute;k</a>
+				</label>
+				<select name="SearchHafro" id="hafro-slider" data-role="slider">
+					<option value="off">Af</option>
+					<option value="on">Á</option>
+				</select>
+			</li>
+		</ul>
+		
+		<ul data-role="listview" data-inset="true" data-wordbankorder="6" 
+				id="SearchMalfar"  class="wordbank">
+			<li data-role="fieldcontain" id="ismal-divider">
+				<label for="malfar-slider">
+					<a href="http://www.arnastofnun.is/page/arnastofnun_gagnasafn_malfarsbankinn" target="_blank">
+						M&aacute;lfarsbanki &Iacute;slenskrar m&aacute;lst&ouml;&eth;var
+					</a>
+				</label>
+				<select name="SearchMalfar" id="malfar-slider" data-role="slider">
+					<option value="off">Af</option>
+					<option value="on">Á</option>
+				</select>
+			</li>
+		</ul>
+		
+		<ul data-role="listview" data-inset="true" data-wordbankorder="7" 
+				id="SearchRitmalaskra" class="wordbank">
+			<li data-role="fieldcontain" id="ismal-divider">
+				<label for="ritmalaskra-slider">
+					<a href="http://www.arnastofnun.is/page/arnastofnun_gagnasafn_ritmal" target="_blank">
+						Ritm&aacute;lssafn Or&eth;ab&oacute;kar H&aacute;sk&oacute;lans
+					</a>
+				</label>
+				<select name="SearchRitmalaskra" id="ritmalaskra-slider" data-role="slider">
+					<option value="off">Af</option>
+					<option value="on">Á</option>
+				</select>
+			</li>
+		</ul>
+
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4><a href="#umoss">Um</a></h4>
+	</div><!-- /footer -->
+
+</div><!-- /page -->
+
+<div data-role="page" id="umoss">
+	<div data-role="header">
+		<h1>Um orðasafnasafn</h1>
+	</div>
+	<div data-role="content">Orðasafnasafn safnar saman orðasöfnum í eitt handhægt leitarviðmót.</div>
+	<div data-role="footer">
+		<h4>&nbsp;</h4>
+	</div>
+</div>
+	
+</body>
 </html>
