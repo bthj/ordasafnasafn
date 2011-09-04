@@ -74,70 +74,79 @@ $(function(){
 			$wordBank.append( liSearching ).listview("refresh");
 			
 			var ordasafn = $wordBank.attr("id");
-			$.getJSON( '/search?ordasafn='+ordasafn+'&q='+query, function(data){  // TODO: error handling with $.ajax instead
-				$wordBank.find(".searching").remove();
-				var wordBankName = $wordBank.attr("data-wordbankname");
-				
-				if( data && data.length > 0) {
-					$.each( data, function(idx, oneResultArray){
-						var h4content = [];
-						var textLegend = "";
-						var litems = [];
-						var itemCount = 0;
-						var liResults = $('<li/>', {'class': 'results'});
-						var h3 = $('<h3/>').attr('style', 'display:none;').append( wordBankName );
-						liResults.append(h3);
-						$.each( oneResultArray, function( index, oneEntry ){
-							if( oneEntry.text ) {
-								h4content.push( oneEntry.text );
-							} else if( oneEntry.textlegend ) {
-								textLegend = oneEntry.textlegend;
-							}
-							if( oneEntry.link ) {
-								var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank">', '</a></li>'];
-								if( oneEntry.html ) {
-									litems.push( litemParts.join( oneEntry.html ) );
-								} else {
-									litems.push( litemParts.join( oneEntry.text ) );
+			$.ajax({
+				type: 'GET',
+				dataType: 'json',
+				url: '/search', 
+				data: { 'ordasafn' : ordasafn, 'q' : query },
+				success: function(data){
+					$wordBank.find(".searching").remove();
+					var wordBankName = $wordBank.attr("data-wordbankname");
+					
+					if( data && data.length > 0) {
+						$.each( data, function(idx, oneResultArray){
+							var h4content = [];
+							var textLegend = "";
+							var litems = [];
+							var itemCount = 0;
+							var liResults = $('<li/>', {'class': 'results'});
+							var h3 = $('<h3/>').attr('style', 'display:none;').append( wordBankName );
+							liResults.append(h3);
+							$.each( oneResultArray, function( index, oneEntry ){
+								if( oneEntry.text ) {
+									h4content.push( oneEntry.text );
+								} else if( oneEntry.textlegend ) {
+									textLegend = oneEntry.textlegend;
 								}
-								itemCount++;
-							} else if( oneEntry.text ) {
-								if( oneEntry.html ) {
-									litems.push( '<li>'+oneEntry.html+'</li>' );
-								} else {
-									litems.push( '<li>'+oneEntry.text+'</li>' );	
-								}
-								itemCount++;
-							}
-						});
-						var h4 = $('<h4/>');
-						if( itemCount && textLegend ) h4.append( "[" + textLegend + "] " );
-						h4.append( h4content.join( ', ' ) );
-						var span = $('<span/>', {
-							'class': 'ui-li-count',
-							html: itemCount
-						});
-						liResults.append(h4).append(span);
-						
-						if( itemCount ) {
-							$wordBank.find("li[class=results]").each(function(){
-								if( parseInt($(this).find("span.ui-li-count").text()) < 1 ) {
-									$(this).remove();
+								if( oneEntry.link ) {
+									var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank">', '</a></li>'];
+									if( oneEntry.html ) {
+										litems.push( litemParts.join( oneEntry.html ) );
+									} else {
+										litems.push( litemParts.join( oneEntry.text ) );
+									}
+									itemCount++;
+								} else if( oneEntry.text ) {
+									if( oneEntry.html ) {
+										litems.push( '<li>'+oneEntry.html+'</li>' );
+									} else {
+										litems.push( '<li>'+oneEntry.text+'</li>' );	
+									}
+									itemCount++;
 								}
 							});
+							var h4 = $('<h4/>');
+							if( itemCount && textLegend ) h4.append( "[" + textLegend + "] " );
+							h4.append( h4content.join( ', ' ) );
+							var span = $('<span/>', {
+								'class': 'ui-li-count',
+								html: itemCount
+							});
+							liResults.append(h4).append(span);
 							
-							var ul = $('<ul/>', {
-								html: litems.join('')
-							});
-							liResults.append(ul);
-
-							$wordBank.append( liResults );
-						} else if( $wordBank.find("li[class=results]").size() < 1 ) {
-							$wordBank.append( liResults );
-						}
-					});
+							if( itemCount ) {
+								$wordBank.find("li[class=results]").each(function(){
+									if( parseInt($(this).find("span.ui-li-count").text()) < 1 ) {
+										$(this).remove();
+									}
+								});
+								
+								var ul = $('<ul/>', {
+									html: litems.join('')
+								});
+								liResults.append(ul);
+	
+								$wordBank.append( liResults );
+							} else if( $wordBank.find("li[class=results]").size() < 1 ) {
+								$wordBank.append( liResults );
+							}
+						});
+					}
+					$wordBank.listview("refresh");
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					$wordBank.find("h4").html('<em style="color:DarkRed;">Villa kom upp.</em>');
 				}
-				$wordBank.listview("refresh");
 			});			
 		}
 	}
@@ -211,7 +220,7 @@ $(function(){
 				updateWordbankPosition( $wordBank, true );
 				oss[ordasafn].active = true;
 			} else {
-				$currentSwitch.closest("ul").find(".results").remove();
+				$currentSwitch.closest("ul").find(".results, .searching").remove();
 				updateWordbankPosition( $wordBank, false );
 				oss[ordasafn].active = false;
 			}

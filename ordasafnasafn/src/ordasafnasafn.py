@@ -105,10 +105,10 @@ class SearchHugtakasafn(Search):
         self.response.out.write( html )
     @classmethod
     def doSearch(cls, searchString):
-        search_params = {"leitarord" : searchString}
+        search_params = {"leitarord" : searchString.decode('utf-8').encode('iso-8859-1') }
         search_params.update( cls.search_params )
         search_url = cls.base_url + "leit-nidurstodur.adp"
-        search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+        search_results = cls.getSearch(search_url, urllib.urlencode(search_params))
         jsonResults = [ cls.renderHTML(search_results) ]
         return json.dumps( jsonResults )
     @classmethod
@@ -121,7 +121,7 @@ class SearchHugtakasafn(Search):
         for div in soup.findAll("div", {"class": "term"}):
             oneResult = {}
             oneResult["link"] = div.dt.a['href']
-            oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in div.dt.a.contents )
+            oneResult["text"] = ''.join( unicode(oneElem) for oneElem in div.dt.a.contents )
             div.dt.a.extract()
             div.dt.insert( 0, oneResult["text"] )
             htmlResult = [ unicode( div.dt ) ]
@@ -146,7 +146,7 @@ class SearchIsmal(Search):
     @classmethod
     def doSearch(cls, searchString):
         search_url = cls.base_url + "searchxml"
-        search_params = {"searchphrase" : "*" + searchString.decode('utf-8') + "*"}
+        search_params = {"searchphrase" : "*" + searchString.decode('utf-8').encode('iso-8859-1') + "*"}
         jsonResults = []
         for lang in ["IS", "EN"]:
             search_params["searchlanguage"] = lang
@@ -241,9 +241,9 @@ class SearchHafro(Search):
         self.response.out.write(html)
     @classmethod
     def doSearch(cls, searchString):
-        search_params = {"qstr" : "%" + searchString + "%"}
+        search_params = {"qstr" : "%" + searchString.decode('utf-8').encode('iso-8859-1') + "%"}
         search_params.update( cls.search_params )
-        search_results = cls.postSearch(cls.base_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+        search_results = cls.postSearch(cls.base_url, urllib.urlencode(search_params))
         jsonResults = [ cls.renderHTML(search_results) ]
         return json.dumps( jsonResults )        
     @classmethod
@@ -275,8 +275,8 @@ class SearchMalfar(Search):
     @classmethod
     def doSearch(cls, searchString):
         search_url = cls.base_url + "leit.pl"
-        search_params = {"ord" : "*"+searchString+"*", "leita" : "Leita"}
-        search_results = cls.postSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
+        search_params = {"ord" : "*"+searchString.decode('utf-8').encode('iso-8859-1')+"*", "leita" : "Leita"}
+        search_results = cls.postSearch(search_url, urllib.urlencode(search_params))
         jsonResults = [ cls.renderHTML(search_results) ]
         return json.dumps( jsonResults )
     @classmethod
@@ -305,7 +305,7 @@ class SearchRitmalaskra(Search):
     @classmethod
     def doSearch(cls, searchString):
         search_url = cls.base_url + "/cgi-bin/ritmal/leitord.cgi"
-        search_params = {"l" : searchString}
+        search_params = {"l" : searchString.decode('utf-8').encode('iso-8859-1')}
         search_params.update( cls.search_params )
         search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('iso-8859-1')
         jsonResults = [ cls.renderHTML(search_results) ]
@@ -345,7 +345,7 @@ class SearchBin(Search):
         search_url = cls.base_url + "leit.php"
         search_params = {"q" : searchString + "%"}
         search_params.update( cls.search_params )
-        search_results = cls.getSearch(search_url, urllib.urlencode(search_params)).decode('utf-8')
+        search_results = cls.getSearch(search_url, urllib.urlencode(search_params))
         jsonResults = [ cls.renderHTML(search_results) ]
         return json.dumps( jsonResults )
     @classmethod
