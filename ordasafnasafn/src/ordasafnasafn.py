@@ -134,7 +134,11 @@ class SearchHugtakasafn(Search):
 class SearchIsmal(Search):
     base_url = "http://ordabanki.hi.is/wordbank/"
     lang_map = {
-        "DK" : "danska", "EN" : "enska", "SF" : "finnska", "FR" : "franska", "FO" : "f&aelig;reyska", "GL" : "gr&aelig;nlenska", "NL" : "hollenska", "EI" : "&iacute;rska", "IS" : "&iacute;slenska", "IT" : "&iacute;talska", "JP" : "japanska", "LA" : "lat&iacute;na", "NOB" : "norskt b&oacute;km&aacute;l", "NN" : "n&yacute;norska", "PT" : "port&uacute;galska", "RU" : "r&uacute;ssneska", "SM" : "sam&iacute;ska", "ES" : "sp&aelig;nska", "SV" : "s&aelig;nska", "DE" : "&thorn;&yacute;ska"
+        "DK" : "danska", "EN" : "enska", "SF" : "finnska", "FR" : "franska", "FO" : "f&aelig;reyska", 
+        "GL" : "gr&aelig;nlenska", "NL" : "hollenska", "EI" : "&iacute;rska", "IS" : "&iacute;slenska", 
+        "IT" : "&iacute;talska", "JP" : "japanska", "LA" : "lat&iacute;na", "NOB" : "norskt b&oacute;km&aacute;l", 
+        "NN" : "n&yacute;norska", "PT" : "port&uacute;galska", "RU" : "r&uacute;ssneska", "SM" : "sam&iacute;ska", 
+        "ES" : "sp&aelig;nska", "SV" : "s&aelig;nska", "DE" : "&thorn;&yacute;ska", "GRISKA" : "Gr&iacute;ska"
     }
     def get(self):
         html = self.doSearch( self.getSearchString() )
@@ -282,11 +286,12 @@ class SearchMalfar(Search):
         soup = BeautifulSoup(html)
         jsonResult = []
         listi = soup.find("div", {"class": "listi"})
-        for a in listi.findAll("a"):
-            oneResult = {}
-            oneResult["link"] = a["href"]
-            oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in a.contents )
-            jsonResult.append( oneResult )
+        if listi is not None:
+            for a in listi.findAll("a"):
+                oneResult = {}
+                oneResult["link"] = a["href"]
+                oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in a.contents )
+                jsonResult.append( oneResult )
         return jsonResult
          
 class SearchRitmalaskra(Search):

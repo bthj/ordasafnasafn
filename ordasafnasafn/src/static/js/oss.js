@@ -8,13 +8,13 @@ $(document).bind("mobileinit", function(){
 $(function(){
 	var oss = null;
 	var wordBankDefaults = {
-		"SearchHugtakasafn" : { "active" : true },
-		"SearchIsmal" : { "active" : true },
-		"SearchTos" : { "active" : false },
-		"SearchBin" : { "active" : false },
-		"SearchHafro" : { "active" : false },
-		"SearchMalfar" : { "active" : false },
-		"SearchRitmalaskra" : { "active" : false }
+		"SearchHugtakasafn" : { "active" : true, "order": 1 },
+		"SearchIsmal" : { "active" : true, "order": 2 },
+		"SearchTos" : { "active" : false, "order": 3 },
+		"SearchBin" : { "active" : false, "order": 4 },
+		"SearchHafro" : { "active" : false, "order": 5 },
+		"SearchMalfar" : { "active" : false, "order": 6 },
+		"SearchRitmalaskra" : { "active" : false, "order": 7 }
 	};
 	
 	try {
@@ -34,12 +34,12 @@ $(function(){
 			if( ! oss[key] ) oss[key] = value;
 		});
 		localStorage["ordasafnasafn"] = JSON.stringify( oss );
-		
-		// TODO:  update flip switches
 	} else {
 		oss = wordBankDefaults;
 	}
 	
+	var banksInOrder = [];
+	// update flip toggles
 	$.each( oss, function(wordbank, settings){
 		var $wordbankSwitch = $("select[name="+wordbank+"]");
 		if( settings.active ) {
@@ -47,16 +47,21 @@ $(function(){
 		} else {
 			$wordbankSwitch[0].selectedIndex = 0;
 		}
+		banksInOrder.push( [wordbank, settings.order] );
 	});
+	// append the banks in order based on meta data
+	banksInOrder.sort( function(a,b){ return a[1] - b[1]; } );
+	var $bankContent = $("#oss > div[data-role=content]");
+	$.each( banksInOrder, function(index, value){
+		$bankContent.append( $("#"+value[0]) );
+	});
+
 	
-	
-	function updateActiveInLocalStorage( ordasafn, isActive ) {
+	function saveStateToLocalStorage() {
 		if( isLocalStorage ) {
-			oss[ordasafn].active = isActive;
 			localStorage["ordasafnasafn"] = JSON.stringify( oss );
 		}
 	}
-	
 	
 	function searchWordbank( $wordBank ) {
 		var query = $("#query").val();
@@ -106,7 +111,7 @@ $(function(){
 							}
 						});
 						var h4 = $('<h4/>');
-						if( textLegend ) h4.append( "[" + textLegend + "] " );
+						if( itemCount && textLegend ) h4.append( "[" + textLegend + "] " );
 						h4.append( h4content.join( ', ' ) );
 						var span = $('<span/>', {
 							'class': 'ui-li-count',
@@ -115,16 +120,70 @@ $(function(){
 						liResults.append(h4).append(span);
 						
 						if( itemCount ) {
+							$wordBank.find("li[class=results]").each(function(){
+								if( parseInt($(this).find("span.ui-li-count").text()) < 1 ) {
+									$(this).remove();
+								}
+							});
+							
 							var ul = $('<ul/>', {
 								html: litems.join('')
 							});
 							liResults.append(ul);
+
+							$wordBank.append( liResults );
+						} else if( $wordBank.find("li[class=results]").size() < 1 ) {
+							$wordBank.append( liResults );
 						}
-						$wordBank.append( liResults );
 					});
 				}
 				$wordBank.listview("refresh");
 			});			
+		}
+	}
+	
+	function updateOrderMetaData() {
+		//update order metadata for localStorga
+		var bankCount = 0;
+		$("ul.wordbank").each(function(){
+			oss[$(this).attr("id")].order = ++bankCount;
+		});
+		saveStateToLocalStorage();
+	}
+	
+	function updateWordbankPosition( $wordBank, isOn ) {
+		if( isOn ) {
+			var banksToMove = [];
+			$wordBank.prevAll().each(function(){
+				if( $(this).find("select").val() == "off" ) {
+					banksToMove.push( $(this) );
+				} else {
+					return false;
+				}
+			});
+			$.each( banksToMove, function(){
+				$(this).slideUp(function(){
+					$(this).insertAfter( $wordBank ).slideDown(400, function(){
+						updateOrderMetaData();
+					});
+				});
+			});
+		} else {
+			var lastBankOn = null;
+			$wordBank.nextAll().each(function(){
+				if( $(this).find("select").val() == "on" ) {
+					lastBankOn = $(this);
+				} else {
+					return false;
+				}
+			});
+			if( lastBankOn ) {
+				$wordBank.slideUp(function(){
+					$(this).insertAfter( lastBankOn ).slideDown(400, function(){
+						updateOrderMetaData();
+					});
+				});
+			}
 		}
 	}
 	
@@ -136,28 +195,29 @@ $(function(){
 		});
 		return false;
 	});
-	
-	function updateWordbankPosition( $wordBank, isOn ) {
-		if( isOn ) {
-			// find next above is off, move above topmost one that is off
-		} else {
-			// find if any below is on, move beneath last one that is on
-		}
-	}
 
+	var switchState = {}; // hack to handle double event firing on flip toggles, based on http://jsfiddle.net/NPC42/mTjtt/20/ <- http://stackoverflow.com/questions/6910712
+	$("select[data-role=slider]").each(function(){
+		var $this = $(this);
+		switchState[$this.attr("id")] = $this.val();
+	});
 	$("#oss select").change(function(event){
 		$currentSwitch = $(this);
-		$wordBank = $currentSwitch.closest("ul");
-		var ordasafn = $wordBank.attr("id");		
-		if( $currentSwitch.val() == "on" ) {
-			updateActiveInLocalStorage( ordasafn, true );
-			searchWordbank( $wordBank );
-			updateWordbankPosition( $wordBank, true );
-		} else {
-			$currentSwitch.closest("ul").find(".results").remove();
-			updateActiveInLocalStorage( ordasafn, false );
-			updateWordbankPosition( $wordBank, false );
+		if( switchState[$currentSwitch.attr("id")] !== $currentSwitch.val() ) {
+			$wordBank = $currentSwitch.closest("ul");
+			var ordasafn = $wordBank.attr("id");
+			if( $currentSwitch.val() == "on" ) {
+				searchWordbank( $wordBank );
+				updateWordbankPosition( $wordBank, true );
+				oss[ordasafn].active = true;
+			} else {
+				$currentSwitch.closest("ul").find(".results").remove();
+				updateWordbankPosition( $wordBank, false );
+				oss[ordasafn].active = false;
+			}
+			saveStateToLocalStorage(); //called unnecessarily often due to asynchronisity in updateWordbankPosition() above
 		}
+		switchState[$currentSwitch.attr("id")] = $currentSwitch.val();
 	});
 	
 	
