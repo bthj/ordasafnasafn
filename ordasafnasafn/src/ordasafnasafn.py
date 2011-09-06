@@ -9,7 +9,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import urlfetch
 
 from BeautifulSoup import BeautifulSoup, Tag
-import json
+import simplejson as json
 
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 #from google.appengine.dist import use_library
