@@ -24,6 +24,8 @@ class Index(webapp.RequestHandler):
 class Search(webapp.RequestHandler):
     def getSearchString(self):
         return self.request.get('q')
+    def getExact(self):
+        return self.request.get('exact')
     @classmethod
     def getSearch(cls, search_url, search_params):
         logging.info("fetching: " + search_url + "?" + search_params)
@@ -51,7 +53,8 @@ class Search(webapp.RequestHandler):
         return matcher.findall(result)
     @classmethod
     def addTargetToLinks(cls, string):
-        return re.sub("(<a.*?)>", "\\1 target=\"_blank\">", string)
+        #return re.sub("(<a.*?)>", "\\1 target=\"_blank\">", string)
+        return string
     @classmethod
     def addBaseUrlToLinks(cls, base_url, string):
         return re.sub("(href=[\'|\"])(.*?)([\'|\"])", "\\1"+base_url+"\\2\\3", string)
@@ -63,11 +66,12 @@ class Search(webapp.RequestHandler):
 class SearchInput(Search):
     def get(self):
         query = self.getSearchString()
+        exact = self.getExact()
         if query != '':
             valinOrdasofn = self.request.get("ordasofn", allow_multiple=True)
             html = '<hr />'
             for ordasafn in valinOrdasofn:
-                classMethodExecution = ''.join([ordasafn, '.doSearch(\'', query, '\')'])
+                classMethodExecution = ''.join([ordasafn, '.doSearch(\'', query, '\', \'' + exact + '\')'])
                 try:
                     oneSearchResult = eval(classMethodExecution)
                 except urlfetch.Error():
@@ -87,9 +91,10 @@ class SearchInput(Search):
 class SearchQuery(Search):
     def get(self):
         query = self.getSearchString()
+        exact = self.getExact()
         ordasafn = self.request.get('ordasafn')
         if query != '' and ordasafn != '':
-            html = eval( ''.join([ordasafn, '.doSearch(\'', query, '\')']) )
+            html = eval( ''.join([ordasafn, '.doSearch(\'', query, '\', \'' + exact + '\')']) )
         else:
             html = ''
         self.response.headers['Content-Type'] = 'text/html'
@@ -101,11 +106,13 @@ class SearchHugtakasafn(Search):
     search_params = {"tungumal" : "oll"}
     filter_pattern = "<dl>(.*)</dl>"
     def get(self):
-        html = self.doSearch( self.getSearchString() )
+        html = self.doSearch( self.getSearchString(), self.isExact() )
         self.response.out.write( html )
     @classmethod
-    def doSearch(cls, searchString):
+    def doSearch(cls, searchString, exact):
         search_params = {"leitarord" : searchString.decode('utf-8').encode('iso-8859-1') }
+        if exact == 'true':
+            search_params["ordrett"] = "t"
         search_params.update( cls.search_params )
         search_url = cls.base_url + "leit-nidurstodur.adp"
         search_results = cls.getSearch(search_url, urllib.urlencode(search_params))
@@ -141,12 +148,16 @@ class SearchIsmal(Search):
         "ES" : "sp&aelig;nska", "SV" : "s&aelig;nska", "DE" : "&thorn;&yacute;ska", "GRISKA" : "Gr&iacute;ska"
     }
     def get(self):
-        html = self.doSearch( self.getSearchString() )
+        html = self.doSearch( self.getSearchString(), self.getExact() )
         self.response.out.write(html)
     @classmethod
-    def doSearch(cls, searchString):
+    def doSearch(cls, searchString, exact):
         search_url = cls.base_url + "searchxml"
-        search_params = {"searchphrase" : "*" + searchString.decode('utf-8').encode('iso-8859-1') + "*"}
+        search_params = {}
+        if exact == 'true':
+            search_params = {"searchphrase" : searchString.decode('utf-8').encode('iso-8859-1')}
+        else:
+            search_params = {"searchphrase" : "*" + searchString.decode('utf-8').encode('iso-8859-1') + "*"}
         jsonResults = []
         for lang in ["IS", "EN"]:
             search_params["searchlanguage"] = lang
@@ -204,12 +215,15 @@ class SearchTos(Search):
     filter_pattern = """<span class="search_string">.*?<br /><br />(.*)</p>"""
     html_heading = """<p><a href="http://tos.sky.is/" target="_blank">T&ouml;lvuor&eth;asafn</a></p>"""
     def get(self):
-        html = self.doSearch( self.getSearchString() )
+        html = self.doSearch( self.getSearchString(), self.getExact() )
         self.response.out.write(html)
     @classmethod
-    def doSearch(cls, searchString):
+    def doSearch(cls, searchString, exact):
         search_url = cls.base_url + "/tos/to/search/"
-        search_params = "srch_string=*" + urllib.quote(searchString) + "*"
+        if exact == 'true':
+            search_params = "srch_string=" + urllib.quote(searchString)
+        else:        
+            search_params = "srch_string=*" + urllib.quote(searchString) + "*"
         search_results = cls.getSearch(search_url, search_params)
         jsonResults = [ cls.renderHTML(search_results) ]
         return json.dumps( jsonResults )
@@ -237,11 +251,14 @@ class SearchHafro(Search):
     base_url = "http://www.hafro.is/ordabok/"
     search_params = {"op" : "search"}
     def get(self):
-        html = self.doSearch( self.getSearchString() )
+        html = self.doSearch( self.getSearchString(), self.getExact() )
         self.response.out.write(html)
     @classmethod
-    def doSearch(cls, searchString):
-        search_params = {"qstr" : "%" + searchString.decode('utf-8').encode('iso-8859-1') + "%"}
+    def doSearch(cls, searchString, exact):
+        if exact == 'true':
+            search_params = {"qstr" : searchString.decode('utf-8').encode('iso-8859-1')}
+        else:
+            search_params = {"qstr" : "%" + searchString.decode('utf-8').encode('iso-8859-1') + "%"}
         search_params.update( cls.search_params )
         search_results = cls.postSearch(cls.base_url, urllib.urlencode(search_params))
         jsonResults = [ cls.renderHTML(search_results) ]
@@ -270,12 +287,15 @@ class SearchMalfar(Search):
     # forsida: http://www.arnastofnun.is/page/arnastofnun_gagnasafn_malfarsbankinn
     base_url = "http://islex.lexis.hi.is/malfar/"
     def get(self):
-        html = self.doSearch( self.getSearchString() )
+        html = self.doSearch( self.getSearchString(), self.getExact() )
         self.response.out.write(html)
     @classmethod
-    def doSearch(cls, searchString):
+    def doSearch(cls, searchString, exact):
         search_url = cls.base_url + "leit.pl"
-        search_params = {"ord" : "*"+searchString.decode('utf-8').encode('iso-8859-1')+"*", "leita" : "Leita"}
+        if exact == 'true':
+            search_params = {"ord" : searchString.decode('utf-8').encode('iso-8859-1'), "leita" : "Leita"}
+        else:
+            search_params = {"ord" : "*"+searchString.decode('utf-8').encode('iso-8859-1')+"*", "leita" : "Leita"}
         search_results = cls.postSearch(search_url, urllib.urlencode(search_params))
         jsonResults = [ cls.renderHTML(search_results) ]
         return json.dumps( jsonResults )
@@ -300,10 +320,10 @@ class SearchRitmalaskra(Search):
     filter_pattern_2 = """(<table border="1" cellpadding="5">.*</table>)"""
     search_params = {"adg" : "leit"}
     def get(self):
-        html = self.doSearch( self.getSearchString() )
+        html = self.doSearch( self.getSearchString(), self.getExact() )
         self.response.out.write(html)
     @classmethod
-    def doSearch(cls, searchString):
+    def doSearch(cls, searchString, exact):
         search_url = cls.base_url + "/cgi-bin/ritmal/leitord.cgi"
         search_params = {"l" : searchString.decode('utf-8').encode('iso-8859-1')}
         search_params.update( cls.search_params )
@@ -338,12 +358,15 @@ class SearchBin(Search):
     filter_pattern = """<div id="main">(.*)<center>.*?<form>"""
     search_params = {"ordmyndir" : "on"}
     def get(self):
-        html = self.doSearch( self.getSearchString() )
+        html = self.doSearch( self.getSearchString(), self.getExact() )
         self.response.out.write(html)
     @classmethod
-    def doSearch(cls, searchString):
+    def doSearch(cls, searchString, exact):
         search_url = cls.base_url + "leit.php"
-        search_params = {"q" : searchString + "%"}
+        if exact == 'true':
+            search_params = {"q" : searchString}
+        else:
+            search_params = {"q" : searchString + "%"}
         search_params.update( cls.search_params )
         search_results = cls.getSearch(search_url, urllib.urlencode(search_params))
         jsonResults = [ cls.renderHTML(search_results) ]

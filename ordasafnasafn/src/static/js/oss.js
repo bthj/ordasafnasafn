@@ -16,7 +16,7 @@ $(function(){
 		"SearchMalfar" : { "active" : false, "order": 6 },
 		"SearchRitmalaskra" : { "active" : false, "order": 7 }
 	};
-	
+
 	try {
 		var isLocalStorage = ('localStorage' in window && window['localStorage'] !== null);
 	} catch (e) {
@@ -65,6 +65,7 @@ $(function(){
 	
 	function searchWordbank( $wordBank ) {
 		var query = $("#query").val();
+		var exact = $("#exact").is(':checked');
 		if( query ) {
 			$wordBank.find(".results").remove();
 			$wordBank.find(".searching").remove();
@@ -78,7 +79,7 @@ $(function(){
 				type: 'GET',
 				dataType: 'json',
 				url: '/search', 
-				data: { 'ordasafn' : ordasafn, 'q' : query },
+				data: { 'ordasafn' : ordasafn, 'q' : query, 'exact' : exact },
 				success: function(data){
 					$wordBank.find(".searching").remove();
 					var wordBankName = $wordBank.attr("data-wordbankname");
@@ -99,7 +100,8 @@ $(function(){
 									textLegend = oneEntry.textlegend;
 								}
 								if( oneEntry.link ) {
-									var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank">', '</a></li>'];
+									//var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank">', '</a></li>'];
+									var litemParts = ['<li><a href="'+oneEntry.link+'">', '</a></li>'];
 									if( oneEntry.html ) {
 										litems.push( litemParts.join( oneEntry.html ) );
 									} else {
@@ -204,6 +206,13 @@ $(function(){
 		});
 		return false;
 	});
+	
+	$("#exact").change(function(event){
+		if( $("#query").val() ) {
+			$("#search").submit();
+		}
+	});
+	
 
 	var switchState = {}; // hack to handle double event firing on flip toggles, based on http://jsfiddle.net/NPC42/mTjtt/20/ <- http://stackoverflow.com/questions/6910712
 	$("select[data-role=slider]").each(function(){

@@ -5,10 +5,11 @@
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="/static/js/oss.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.js"></script>
+	<script type="text/javascript" src="/static/js/spin.min.js"></script>
 	
 	<style type="text/css">
 		.ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
@@ -36,8 +37,12 @@
 		<div data-role="fieldcontain">
 			<form action="/search" method="get" id="search">
 		    <input type="search" name="q" id="query" value="" />
-		    <input type="submit" value="Leita í orðasöfnum" 
-		    	data-inline="true" data-theme="b" data-icon="search" data-iconpos="right" />
+		    <fieldset data-role="controlgroup" data-type="horizontal" data-inline="true">
+			    <input type="checkbox" name="exact" id="exact" data-inline="true" />
+			    <label for="exact">Orðrétt</label>
+			    <input type="submit" value="Leita í orðasöfnum" 
+			    	data-inline="true" data-theme="b" data-icon="search" data-iconpos="right" />
+		    </fieldset>
 			</form>
 		</div>
 
