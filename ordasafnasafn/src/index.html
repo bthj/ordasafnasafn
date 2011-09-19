@@ -36,13 +36,13 @@
 	
 		<div data-role="fieldcontain">
 			<form action="/search" method="get" id="search">
-		    <input type="search" name="q" id="query" value="" />
-		    <fieldset data-role="controlgroup" data-type="horizontal" data-inline="true">
+			  <input type="search" name="q" id="query" value="" data-inline="true" />
+			  <fieldset data-role="controlgroup" data-type="horizontal">
+			    <input type="submit" value="Leita" data-theme="b" 
+			    	data-icon="search" data-iconpos="right" data-inline="true" />
 			    <input type="checkbox" name="exact" id="exact" data-inline="true" />
-			    <label for="exact">Orðrétt</label>
-			    <input type="submit" value="Leita í orðasöfnum" 
-			    	data-inline="true" data-theme="b" data-icon="search" data-iconpos="right" />
-		    </fieldset>
+			    <label for="exact">orðrétt</label>
+			  </fieldset>
 			</form>
 		</div>
 
@@ -160,7 +160,16 @@
 	<div data-role="header">
 		<h1>Um orðasafnasafn</h1>
 	</div>
-	<div data-role="content">Orðasafnasafn safnar saman orðasöfnum í eitt handhægt leitarviðmót.</div>
+	<div data-role="content">
+		<p>Orðasafnasafn er leitarviðmót fyrir íslenska orðabanka.</p>
+		<p>
+			Viðmótið gerir leit handhæga frá einum stað í þeim mörgu opnu orðabönkum sem eru hýstir á vefjum stofnana.  
+			Hönnun viðmótsins hentar jafnt fyrir borðtölvu- sem snjallsímaskjái og því aðgengilegt við sem flestar aðstæður.
+		</p>
+		<p>
+			Orðasafnasafn er gæluverkefni <a href="http://bthj.is">Björns Þórs Jónssonar</a> og spratt fyrst og fremst af eigin löngun til að hafa svona tól við hendina og vonandi reynist þetta fleirum gagnlegt og til þess fallið að opna enn frekar aðgengi að þeim upplýsingum sem orðabankarnir geyma.
+		</p>
+	</div>
 	<div data-role="footer">
 		<h4>&nbsp;</h4>
 	</div>

@@ -7,14 +7,17 @@ $(document).bind("mobileinit", function(){
 
 $(function(){
 	var oss = null;
-	var wordBankDefaults = {
-		"SearchHugtakasafn" : { "active" : true, "order": 1 },
-		"SearchIsmal" : { "active" : true, "order": 2 },
-		"SearchTos" : { "active" : false, "order": 3 },
-		"SearchBin" : { "active" : false, "order": 4 },
-		"SearchHafro" : { "active" : false, "order": 5 },
-		"SearchMalfar" : { "active" : false, "order": 6 },
-		"SearchRitmalaskra" : { "active" : false, "order": 7 }
+	var ossDefaults = {
+		"wordBanks" : {
+			"SearchHugtakasafn" : { "active" : true, "order": 1 },
+			"SearchIsmal" : { "active" : true, "order": 2 },
+			"SearchTos" : { "active" : false, "order": 3 },
+			"SearchBin" : { "active" : false, "order": 4 },
+			"SearchHafro" : { "active" : false, "order": 5 },
+			"SearchMalfar" : { "active" : false, "order": 6 },
+			"SearchRitmalaskra" : { "active" : false, "order": 7 }			
+		},
+		"exact" : true
 	};
 
 	try {
@@ -30,17 +33,23 @@ $(function(){
 		if( ! oss ) {
 			oss = {};
 		}
-		$.each(wordBankDefaults, function(key, value){
-			if( ! oss[key] ) oss[key] = value;
+		if( ! oss.wordBanks) {
+			oss.wordBanks = {};
+		}
+		$.each(ossDefaults.wordBanks, function(key, value){
+			if( ! oss.wordBanks[key] ) oss.wordBanks[key] = value;
 		});
+		if( oss.exact === undefined ) {
+			oss.exact = ossDefaults.exact;
+		}
 		localStorage["ordasafnasafn"] = JSON.stringify( oss );
 	} else {
-		oss = wordBankDefaults;
+		oss = ossDefaults;
 	}
 	
 	var banksInOrder = [];
 	// update flip toggles
-	$.each( oss, function(wordbank, settings){
+	$.each( oss.wordBanks, function(wordbank, settings){
 		var $wordbankSwitch = $("select[name="+wordbank+"]");
 		if( settings.active ) {
 			$wordbankSwitch[0].selectedIndex = 1;
@@ -55,6 +64,8 @@ $(function(){
 	$.each( banksInOrder, function(index, value){
 		$bankContent.append( $("#"+value[0]) );
 	});
+	
+	$("#exact").attr("checked", oss.exact);
 
 	
 	function saveStateToLocalStorage() {
@@ -157,7 +168,7 @@ $(function(){
 		//update order metadata for localStorga
 		var bankCount = 0;
 		$("ul.wordbank").each(function(){
-			oss[$(this).attr("id")].order = ++bankCount;
+			oss.wordBanks[$(this).attr("id")].order = ++bankCount;
 		});
 		saveStateToLocalStorage();
 	}
@@ -211,6 +222,8 @@ $(function(){
 		if( $("#query").val() ) {
 			$("#search").submit();
 		}
+		oss.exact = $(this).is(":checked");
+		saveStateToLocalStorage();
 	});
 	
 
@@ -227,11 +240,11 @@ $(function(){
 			if( $currentSwitch.val() == "on" ) {
 				searchWordbank( $wordBank );
 				updateWordbankPosition( $wordBank, true );
-				oss[ordasafn].active = true;
+				oss.wordBanks[ordasafn].active = true;
 			} else {
 				$currentSwitch.closest("ul").find(".results, .searching").remove();
 				updateWordbankPosition( $wordBank, false );
-				oss[ordasafn].active = false;
+				oss.wordBanks[ordasafn].active = false;
 			}
 			saveStateToLocalStorage(); //called unnecessarily often due to asynchronisity in updateWordbankPosition() above
 		}
