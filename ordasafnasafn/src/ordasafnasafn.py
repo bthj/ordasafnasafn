@@ -225,11 +225,11 @@ class SearchTos(Search):
         else:        
             search_params = "srch_string=*" + urllib.quote(searchString) + "*"
         search_results = cls.getSearch(search_url, search_params)
-        jsonResults = [ cls.renderHTML(search_results) ]
+        jsonResults = [ cls.renderHTML(search_results, search_url, search_params) ]
         return json.dumps( jsonResults )
     
     @classmethod
-    def renderHTML(cls, search_results):
+    def renderHTML(cls, search_results, search_url, search_params):
         html = cls.filterSearch(cls.filter_pattern, search_results)[0]
         html = cls.addBaseUrlToLinks(cls.base_url, html)
         html = cls.addTargetToLinks(html)
@@ -242,7 +242,7 @@ class SearchTos(Search):
                     oneResult["link"] = div.strong.a['href']
                     oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in div.strong.a.contents )
                 else:
-                    oneResult["link"] = ''
+                    oneResult["link"] = ''.join([search_url,'?',search_params])
                     oneResult["text"] = ' '.join( unicode(oneElem) for oneElem in div.strong.contents )
                 jsonResult.append( oneResult )
         return jsonResult
@@ -369,10 +369,10 @@ class SearchBin(Search):
             search_params = {"q" : searchString + "%"}
         search_params.update( cls.search_params )
         search_results = cls.getSearch(search_url, urllib.urlencode(search_params))
-        jsonResults = [ cls.renderHTML(search_results) ]
+        jsonResults = [ cls.renderHTML(search_results, search_url, search_params) ]
         return json.dumps( jsonResults )
     @classmethod
-    def renderHTML(cls, search_results):
+    def renderHTML(cls, search_results, search_url, search_params):
         filtered_search = cls.filterSearch(cls.filter_pattern, search_results)
         html = filtered_search[0]
         html = re.sub(r'<h2>.*</h2>', '', html)
@@ -389,6 +389,17 @@ class SearchBin(Search):
             oneResultHtml.append( '</small>' )
             oneResult["html"] = ''.join( oneResultHtml )
             jsonResult.append( oneResult )
+        if len(jsonResult) < 1:
+            resultHead = soup.find("span", {"style" : "font-size:1.25em; color:#0000FF;"})
+            if resultHead is not None:  # we seem to have exactly one result and are already on the detail page
+                oneResult = {}
+                oneResult["link"] = ''.join([search_url,'?',urllib.urlencode(search_params)])
+                oneResult["text"] = ''.join( unicode(oneElem) for oneElem in resultHead.strong.contents )
+                oneResultHtml = [ oneResult["text"], ' <small>' ]
+                oneResultHtml.append( ''.join(unicode(oneElem) for oneElem in resultHead.findNextSiblings(text=True)) )
+                oneResultHtml.append( '</small>' )
+                oneResult['html'] = ''.join( oneResultHtml )
+                jsonResult.append( oneResult )                
         return jsonResult
 
 #TODO:
