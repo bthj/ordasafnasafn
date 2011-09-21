@@ -4,6 +4,10 @@ $(document).bind("mobileinit", function(){
 	$.mobile.page.prototype.options.backBtnText = "Til baka";
 });
 
+var addthis_config = {
+	services_exclude : "print",
+	data_track_clickback: false
+}
 
 $(function(){
 	var oss = null;
@@ -63,6 +67,7 @@ $(function(){
 	var $bankContent = $("#oss > div[data-role=content]");
 	$.each( banksInOrder, function(index, value){
 		$bankContent.append( $("#"+value[0]) );
+		$bankContent.append(  $("#oss .addthis_toolbox") );
 	});
 	
 	$("#exact").attr("checked", oss.exact);

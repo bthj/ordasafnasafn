@@ -575,7 +575,7 @@ google.bookmarkbubble.Bubble.prototype.build_ = function() {
   // The "Add to Home Screen" text is intended to be the exact same text
   // that is displayed in the menu of Android / Mobile Safari.
   if (isAndroid) { bubbleInner.innerHTML = '<b>Til að setja þetta vefforrit á heimaskjáinn:</b> ' +
-        'Snertu valmyndarhnappinn , veldu ,,More" og þá ,,Add shortcut to Home"'; }
+        '<ol><li>Bókarmerktu síðuna</li><li>Opnaðu yfirlit bókarmerkja</li><li>Snertu bókarmerki þessarar síðu í um sekúndu</li><li>Veldu <em>Add to Home screen</em></li></ol>'; }
   else {
   if (this.getIosVersion_() >= this.getVersion_(4, 2)) {
     bubbleInner.innerHTML = 'Til að setja þetta vefforrit á heimaskjáinn: ' +
