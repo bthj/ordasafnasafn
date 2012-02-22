@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-22 18:02+0000\n"
+"POT-Creation-Date: 2012-02-22 19:57+0000\n"
 "PO-Revision-Date: 2012-02-22 18:05+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: is_IS <LL@li.org>\n"
@@ -18,43 +18,57 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: ordasafnasafn.py:21
+#: ordasafnasafn.py:26
 msgid "Wordbank search aggregator"
 msgstr "Orðasafnasafn"
 
-#: ordasafnasafn.py:22
+#: ordasafnasafn.py:27
 msgid "Search"
 msgstr "Leita"
 
-#: ordasafnasafn.py:23
+#: ordasafnasafn.py:28
 msgid "exact"
 msgstr "orðrétt"
 
-#: ordasafnasafn.py:24
+#: ordasafnasafn.py:29
 msgid "On"
 msgstr "Á"
 
-#: ordasafnasafn.py:25
+#: ordasafnasafn.py:30
 msgid "Off"
 msgstr "Af"
 
-#: ordasafnasafn.py:26
+#: ordasafnasafn.py:31
 msgid "About"
 msgstr "Um"
 
-#: ordasafnasafn.py:27
+#: ordasafnasafn.py:32
 msgid "About the wordbank search aggregator"
 msgstr "Um orðasafnasafn"
 
-#: ordasafnasafn.py:28
+#: ordasafnasafn.py:33
 msgid "aboutContents1"
 msgstr "Orðasafnasafn er leitarviðmót fyrir íslenska orðabanka."
 
-#: ordasafnasafn.py:29
+#: ordasafnasafn.py:34
 msgid "aboutContents2"
-msgstr "Viðmótið gerir leit handhæga frá einum stað í þeim mörgu opnu orðabönkum sem eru hýstir á vefjum stofnana.  Hönnun viðmótsins hentar jafnt fyrir borðtölvu- sem snjallsímaskjái og því aðgengilegt við sem flestar aðstæður."
+msgstr ""
+"Viðmótið gerir leit handhæga frá einum stað í þeim mörgu opnu orðabönkum "
+"sem eru hýstir á vefjum stofnana.  Hönnun viðmótsins hentar jafnt fyrir "
+"borðtölvu- sem snjallsímaskjái og því aðgengilegt við sem flestar "
+"aðstæður."
 
-#: ordasafnasafn.py:30
+#: ordasafnasafn.py:35
 msgid "aboutContents3"
-msgstr "Orðasafnasafn er <a href="http://bthj.is/category/oss/">gæluverkefni Björns Þórs Jónssonar</a> og spratt fyrst og fremst af eigin löngun til að hafa svona tól við hendina og vonandi reynist þetta fleirum gagnlegt og til þess fallið að opna enn frekar aðgengi að þeim upplýsingum sem orðabankarnir geyma."
+msgstr ""
+"Orðasafnasafn er <a href=\"http://bthj.is/category/oss/\">gæluverkefni "
+"Björns Þórs Jónssonar</a> og spratt fyrst og fremst af eigin löngun til "
+"að hafa svona tól við hendina og vonandi reynist þetta fleirum gagnlegt "
+"og til þess fallið að opna enn frekar aðgengi að þeim upplýsingum sem "
+"orðabankarnir geyma."
+
+#: ordasafnasafn.py:36
+msgid "aboutContents4"
+msgstr ""
+"Ábendingar má gjarnan skrá í <a href=\"http://code.google.com/p/ordasafnasafn/issues/list\">verkefnalista OSS</a>."
 

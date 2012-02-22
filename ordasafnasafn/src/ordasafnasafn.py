@@ -20,7 +20,7 @@ class Index(webapp2.RequestHandler):
     def get(self):
         locale = self.request.GET.get('locale', 'en_US')
         i18n.get_i18n().set_locale(locale)
-        
+
         #would be nicer to get a dict with translation keys from i18n if possible...
         template_values = {
             'title' : i18n.gettext('Wordbank search aggregator'),
@@ -32,7 +32,8 @@ class Index(webapp2.RequestHandler):
             'titleAbout' : i18n.gettext('About the wordbank search aggregator'),
             'aboutContents1' : i18n.gettext('aboutContents1'),
             'aboutContents2' : i18n.gettext('aboutContents2'),
-            'aboutContents3' : i18n.gettext('aboutContents3')
+            'aboutContents3' : i18n.gettext('aboutContents3'),
+            'aboutContents4' : i18n.gettext('aboutContents4')
         }
         path = os.path.join(os.path.dirname(__file__), 'index.html')
         self.response.out.write(template.render(path, template_values))
