@@ -1,0 +1,60 @@
+# Icelandic (Iceland) translations for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-02-22 18:02+0000\n"
+"PO-Revision-Date: 2012-02-22 18:05+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: is_IS <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: ordasafnasafn.py:21
+msgid "Wordbank search aggregator"
+msgstr "Orðasafnasafn"
+
+#: ordasafnasafn.py:22
+msgid "Search"
+msgstr "Leita"
+
+#: ordasafnasafn.py:23
+msgid "exact"
+msgstr "orðrétt"
+
+#: ordasafnasafn.py:24
+msgid "On"
+msgstr "Á"
+
+#: ordasafnasafn.py:25
+msgid "Off"
+msgstr "Af"
+
+#: ordasafnasafn.py:26
+msgid "About"
+msgstr "Um"
+
+#: ordasafnasafn.py:27
+msgid "About the wordbank search aggregator"
+msgstr "Um orðasafnasafn"
+
+#: ordasafnasafn.py:28
+msgid "aboutContents1"
+msgstr "Orðasafnasafn er leitarviðmót fyrir íslenska orðabanka."
+
+#: ordasafnasafn.py:29
+msgid "aboutContents2"
+msgstr "Viðmótið gerir leit handhæga frá einum stað í þeim mörgu opnu orðabönkum sem eru hýstir á vefjum stofnana.  Hönnun viðmótsins hentar jafnt fyrir borðtölvu- sem snjallsímaskjái og því aðgengilegt við sem flestar aðstæður."
+
+#: ordasafnasafn.py:30
+msgid "aboutContents3"
+msgstr "Orðasafnasafn er <a href="http://bthj.is/category/oss/">gæluverkefni Björns Þórs Jónssonar</a> og spratt fyrst og fremst af eigin löngun til að hafa svona tól við hendina og vonandi reynist þetta fleirum gagnlegt og til þess fallið að opna enn frekar aðgengi að þeim upplýsingum sem orðabankarnir geyma."
+

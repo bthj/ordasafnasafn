@@ -4,8 +4,9 @@ import urllib
 import re
 from google.appengine.ext.webapp import template
 
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
+import webapp2
+from webapp2_extras import i18n
+#from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import urlfetch
 
 from BeautifulSoup import BeautifulSoup, Tag
@@ -15,13 +16,28 @@ import simplejson as json
 #from google.appengine.dist import use_library
 #use_library('django', '1.2')
 
-class Index(webapp.RequestHandler):
+class Index(webapp2.RequestHandler):
     def get(self):
-        template_values = {}
+        locale = self.request.GET.get('locale', 'en_US')
+        i18n.get_i18n().set_locale(locale)
+        
+        #would be nicer to get a dict with translation keys from i18n if possible...
+        template_values = {
+            'title' : i18n.gettext('Wordbank search aggregator'),
+            'Search' : i18n.gettext('Search'),
+            'exact' : i18n.gettext('exact'),
+            'On' : i18n.gettext('On'),
+            'Off' : i18n.gettext('Off'),
+            'About' : i18n.gettext('About'),
+            'titleAbout' : i18n.gettext('About the wordbank search aggregator'),
+            'aboutContents1' : i18n.gettext('aboutContents1'),
+            'aboutContents2' : i18n.gettext('aboutContents2'),
+            'aboutContents3' : i18n.gettext('aboutContents3')
+        }
         path = os.path.join(os.path.dirname(__file__), 'index.html')
         self.response.out.write(template.render(path, template_values))
 
-class Search(webapp.RequestHandler):
+class Search(webapp2.RequestHandler):
     def getSearchString(self):
         return self.request.get('q')
     def getExact(self):
@@ -53,8 +69,7 @@ class Search(webapp.RequestHandler):
         return matcher.findall(result)
     @classmethod
     def addTargetToLinks(cls, string):
-        #return re.sub("(<a.*?)>", "\\1 target=\"_blank\">", string)
-        return string
+        return re.sub("(<a.*?)>", "\\1 target=\"_blank\">", string)
     @classmethod
     def addBaseUrlToLinks(cls, base_url, string):
         return re.sub("(href=[\'|\"])(.*?)([\'|\"])", "\\1"+base_url+"\\2\\3", string)
@@ -177,7 +192,7 @@ class SearchIsmal(Search):
         synonym_matcher = re.compile("<synonym>(.*?)</synonym>", re.I | re.S | re.M)
         word_entry_matcher = re.compile("<word>(.*?</word>.*?)</word>", re.I | re.S | re.M)
         word_matcher = re.compile("<word>(.*?)</word>", re.I | re.S | re.M)
-        term_url_matcher = re.compile("dictionary.*?>.*?</dictionary>.*<url>.*http://herdubreid.rhi.hi.is:1026/wordbank/(.*?)</url>", re.I | re.S | re.M)
+        term_url_matcher = re.compile("dictionary.*?>.*?</dictionary>.*<url>.*http://ordabanki.hi.is/wordbank/(.*?)</url>", re.I | re.S | re.M)
         searchstring_matcher = re.compile("("+searchstring+")", re.I)
 
         searchlanguage = searchlanguage_matcher.search(xml).group(1)
@@ -406,7 +421,7 @@ class SearchBin(Search):
 # http://elias.rhi.hi.is/rimord/
 
 logging.getLogger().setLevel(logging.DEBUG)
-application = webapp.WSGIApplication([
+application = webapp2.WSGIApplication([
                                       ('/', Index),
                                       ('/search-input', SearchInput),
                                       ('/search', SearchQuery),
@@ -419,9 +434,3 @@ application = webapp.WSGIApplication([
                                       ('/bin', SearchBin)
                                       ], debug=True)
 
-
-def main():
-    run_wsgi_app(application)
-
-if __name__ == '__main__':
-    main()

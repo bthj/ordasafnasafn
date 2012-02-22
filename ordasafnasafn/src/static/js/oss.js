@@ -72,6 +72,7 @@ $(function(){
 	
 	$("#exact").attr("checked", oss.exact);
 
+
 	
 	function saveStateToLocalStorage() {
 		if( isLocalStorage ) {
@@ -116,8 +117,7 @@ $(function(){
 									textLegend = oneEntry.textlegend;
 								}
 								if( oneEntry.link ) {
-									//var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank">', '</a></li>'];
-									var litemParts = ['<li><a href="'+oneEntry.link+'">', '</a></li>'];
+									var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank">', '</a></li>'];
 									if( oneEntry.html ) {
 										litems.push( litemParts.join( oneEntry.html ) );
 									} else {
@@ -214,12 +214,16 @@ $(function(){
 		}
 	}
 	
-	$("#search").submit(function(event){
+	function searchWordbanks() {
 		$("ul.wordbank").each(function(){
 			var $wordBank = $(this);
 			var isActive = $wordBank.find("select").val() == "on";
 			if( isActive ) searchWordbank( $wordBank );
-		});
+		});		
+	}
+	
+	$("#search").submit(function(event){
+		searchWordbanks();
 		return false;
 	});
 	
@@ -255,8 +259,30 @@ $(function(){
 		}
 		switchState[$currentSwitch.attr("id")] = $currentSwitch.val();
 	});
-	
-	
+		
+
+		
+	function getQueryString() {  // snatched from http://stackoverflow.com/questions/647259/javascript-query-string/647272#647272
+		var result = {}, queryString = location.search.substring(1),
+			re = /([^&=]+)=([^&]*)/g, m;
+
+		while (m = re.exec(queryString)) {
+			result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+		}
+		return result;
+	}
+
+	//TODO: look at:  http://jquerymobile.com/test/docs/pages/page-dynamic.html
+	// let's make sure the page is initialized... 
+	$("#oss").page();
+	// ...before we call methods to refresh it's widgets:
+	var query = getQueryString()["query"];
+	if( query ) {
+		$("#query").val( query );
+		searchWordbanks();
+	}		
+
+
 	
 	
 	// mobile bookmark bubble init

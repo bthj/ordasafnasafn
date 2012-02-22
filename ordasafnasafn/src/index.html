@@ -3,18 +3,21 @@
 	<head> 
 	<title>Orðasafnasafn</title> 
 	
+	<meta name="description" content="Orðasafnasafn safnar opnum orðasöfnum í eitt leitarviðmót." />
+	<meta name="keywords" content="orðasafn, orðabankar, leit, dictionary, íslensk, Icelandic" />
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="apple-mobile-web-app-capable" content="yes" /> 
 	
-	<link rel="icon" href="/static/img/oss_48x48.png" />
-	<link rel="apple-touch-icon" href="/static/img/oss_128x128.png"/>
-	<link rel="apple-touch-icon-precomposed" href="/static/img/oss_128x128.png"/>
+	<link rel="icon" href="static/img/oss_48x48.png" />
+	<link rel="apple-touch-icon" href="static/img/oss_128x128.png"/>
+	<link rel="apple-touch-icon-precomposed" href="static/img/oss_128x128.png"/>
 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
-	<script type="text/javascript" src="/static/js/bookmark_bubble2.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	<script type="text/javascript" src="static/js/bookmark_bubble2.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
 	<script type="text/javascript" src="/static/js/oss.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
 	
 	<style type="text/css">
 		.ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
@@ -26,6 +29,12 @@
 		    right: 0;
 		    width: 40%;
 		}
+		
+		div.ui-btn { 
+			/* when updating to jquery 1.0.x the inline checkbox has a float property 
+				and we need to manually apply it to the submit button beside it */
+			float: left;
+		}
 	</style>
 </head> 
 
@@ -34,7 +43,8 @@
 <div data-role="page" id="oss">
 
 	<div data-role="header">
-		<h1>Orðasafnasafn</h1>
+		<h1>{{title}}</h1>
+		<a href="index.html" data-icon="grid" class="ui-btn-right">IS</a>
 	</div><!-- /header -->
 
 	<div data-role="content">
@@ -42,11 +52,13 @@
 		<div data-role="fieldcontain">
 			<form action="/search" method="get" id="search">
 			  <input type="search" name="q" id="query" value="" data-inline="true" />
-			  <fieldset data-role="controlgroup" data-type="horizontal">
-			    <input type="submit" value="Leita" data-theme="b" 
+			  <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
+
+			    <input type="submit" value="{{Search}}" data-theme="b" 
 			    	data-icon="search" data-iconpos="right" data-inline="true" />
+			    	
 			    <input type="checkbox" name="exact" id="exact" data-inline="true" />
-			    <label for="exact">orðrétt</label>
+			    <label for="exact">{{exact}}</label>
 			  </fieldset>
 			</form>
 		</div>
@@ -60,8 +72,8 @@
 					</a>
 				</label>
 				<select name="SearchHugtakasafn" id="hts-slider" data-role="slider">
-					<option value="off">Af</option>
-					<option value="on">Á</option>
+					<option value="off">{{Off}}</option>
+					<option value="on">{{On}}</option>
 				</select>
 			</li>
 		</ul>
@@ -75,8 +87,8 @@
 					</a>
 				</label>
 				<select name="SearchIsmal" id="ismal-slider" data-role="slider">
-					<option value="off">Af</option>
-					<option value="on">Á</option>
+					<option value="off">{{Off}}</option>
+					<option value="on">{{On}}</option>
 				</select>
 			</li>
 		</ul>
@@ -88,13 +100,13 @@
 					<a href="http://tos.sky.is/" target="_blank">T&ouml;lvuor&eth;asafn</a>
 				</label>
 				<select name="SearchTos" id="tos-slider" data-role="slider">
-					<option value="off">Af</option>
-					<option value="on">Á</option>
+					<option value="off">{{Off}}</option>
+					<option value="on">{{On}}</option>
 				</select>
 			</li>
 		</ul>
 		
-		<ul data-role="listview" data-inset="true" data-wordbankorder="4" 
+		<ul data-role="listview" data-inset="true" data-wordbankorder="4" data-wordbankname="Beygingarlýsing íslensks nútímamáls"
 				id="SearchBin" class="wordbank">
 			<li data-role="fieldcontain" id="ismal-divider">
 				<label for="bin-slider">
@@ -103,26 +115,26 @@
 					</a>
 				</label>
 				<select name="SearchBin" id="bin-slider" data-role="slider">
-					<option value="off">Af</option>
-					<option value="on">Á</option>
+					<option value="off">{{Off}}</option>
+					<option value="on">{{On}}</option>
 				</select>
 			</li>
 		</ul>
 		
-		<ul data-role="listview" data-inset="true" data-wordbankorder="5" 
+		<ul data-role="listview" data-inset="true" data-wordbankorder="5" data-wordbankname="Sjávardýraorðabók"
 				id="SearchHafro" class="wordbank">
 			<li data-role="fieldcontain" id="ismal-divider">
 				<label for="hafro-slider">
 					<a href="http://www.hafro.is/ordabok/" target="_blank">Sj&aacute;vard&yacute;raor&eth;ab&oacute;k</a>
 				</label>
 				<select name="SearchHafro" id="hafro-slider" data-role="slider">
-					<option value="off">Af</option>
-					<option value="on">Á</option>
+					<option value="off">{{Off}}</option>
+					<option value="on">{{On}}</option>
 				</select>
 			</li>
 		</ul>
 		
-		<ul data-role="listview" data-inset="true" data-wordbankorder="6" 
+		<ul data-role="listview" data-inset="true" data-wordbankorder="6" data-wordbankname="Málfarsbanki Íslenskrar málstöðvar"
 				id="SearchMalfar" class="wordbank">
 			<li data-role="fieldcontain" id="ismal-divider">
 				<label for="malfar-slider">
@@ -131,13 +143,13 @@
 					</a>
 				</label>
 				<select name="SearchMalfar" id="malfar-slider" data-role="slider">
-					<option value="off">Af</option>
-					<option value="on">Á</option>
+					<option value="off">{{Off}}</option>
+					<option value="on">{{On}}</option>
 				</select>
 			</li>
 		</ul>
 		
-		<ul data-role="listview" data-inset="true" data-wordbankorder="7" 
+		<ul data-role="listview" data-inset="true" data-wordbankorder="7" data-wordbankname="Ritmálssafn Orðabókar Háskólans"
 				id="SearchRitmalaskra" class="wordbank">
 			<li data-role="fieldcontain" id="ismal-divider">
 				<label for="ritmalaskra-slider">
@@ -146,49 +158,32 @@
 					</a>
 				</label>
 				<select name="SearchRitmalaskra" id="ritmalaskra-slider" data-role="slider">
-					<option value="off">Af</option>
-					<option value="on">Á</option>
+					<option value="off">{{Off}}</option>
+					<option value="on">{{On}}</option>
 				</select>
 			</li>
 		</ul>
 		
-		<!-- AddThis Button BEGIN -->
-		<div
-			class="addthis_toolbox addthis_default_style addthis_32x32_style">
-			<a class="addthis_button_preferred_1"></a>
-			<a class="addthis_button_preferred_2"></a>
-			<a class="addthis_button_preferred_3"></a>
-			<a class="addthis_button_preferred_4"></a>
-			<a class="addthis_button_compact"></a>
-			<a class="addthis_counter addthis_bubble_style"></a>
-			<a class="addthis_button_google_plusone"></a>
-		</div>
-		<script type="text/javascript"
-			src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4e79f11106899546"></script>
-		<!-- AddThis Button END -->
 
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4><a href="#umoss">Um</a></h4>
+		<h4><a href="#umoss">{{About}}</a></h4>
 	</div><!-- /footer -->
 
 </div><!-- /page -->
 
 <div data-role="page" id="umoss">
 	<div data-role="header">
-		<h1>Um orðasafnasafn</h1>
+		<h1>{{titleAbout}}</h1>
 	</div>
 	<div data-role="content">
-		<p>Orðasafnasafn er leitarviðmót fyrir íslenska orðabanka.</p>
+		<p>{{aboutContents1}}</p>
 		<p>
-			Viðmótið gerir leit handhæga frá einum stað í þeim mörgu opnu orðabönkum sem eru hýstir á vefjum stofnana.  
-			Hönnun viðmótsins hentar jafnt fyrir borðtölvu- sem snjallsímaskjái og því aðgengilegt við sem flestar aðstæður.
+			{{aboutContents2}}
 		</p>
 		<p>
-			Orðasafnasafn er <a href="http://bthj.is/category/oss/">gæluverkefni Björns Þórs Jónssonar</a> 
-			og spratt fyrst og fremst af eigin löngun til að hafa svona tól við hendina og vonandi reynist þetta fleirum gagnlegt 
-			og til þess fallið að opna enn frekar aðgengi að þeim upplýsingum sem orðabankarnir geyma.
+			{{aboutContents2}}
 		</p>
 		<p>
 			Ábendingar má gjarnan skrá í <a href="http://code.google.com/p/ordasafnasafn/issues/list">verkefnalista OSS</aþ>.
