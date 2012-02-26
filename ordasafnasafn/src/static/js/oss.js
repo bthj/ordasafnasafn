@@ -23,6 +23,17 @@ $(function(){
 		},
 		"exact" : true
 	};
+	
+	var ossNameIdMap = {
+			"SearchHugtakasafn" : 1, 
+			"SearchIsmal" : 2,
+			"SearchTos" : 3, 
+			"SearchBin" : 4, 
+			"SearchHafro" : 5, 
+			"SearchMalfar" : 6, 
+			"SearchRitmalaskra" : 7 
+	};
+	
 
 	try {
 		var isLocalStorage = ('localStorage' in window && window['localStorage'] !== null);
@@ -51,6 +62,41 @@ $(function(){
 		oss = ossDefaults;
 	}
 	
+	
+	
+	var bankIdsFromQuery = getQueryString()["b"];
+	if( bankIdsFromQuery ) {
+		// we are setting active banks via query parameter, let those override
+		var bankIds = bankIdsFromQuery.split("|");
+
+		var order = 0;
+		$.each( oss.wordBanks, function(wordbank, settings){
+			oss.wordBanks[wordbank].active = false;
+			$.each( bankIds, function( index, oneId ){
+				if( oneId == ossNameIdMap[wordbank] ) {
+					oss.wordBanks[wordbank].active = true;
+					oss.wordBanks[wordbank].order = ++order;
+				}
+			});			
+		});
+		$.each( oss.wordBanks, function(wordbank, settings){
+			if( false == settings.active ) {
+				oss.wordBanks[wordbank].order = ++order;
+			}
+		});
+		
+		var exactFromQuery = getQueryString()["e"];
+		if( exactFromQuery == 't' ) {
+			oss.exact = true;
+		} else {
+			oss.exact = false;
+		}
+		
+		saveStateToLocalStorage();
+	}
+	
+	
+	
 	var banksInOrder = [];
 	// update flip toggles
 	$.each( oss.wordBanks, function(wordbank, settings){
@@ -62,23 +108,52 @@ $(function(){
 		}
 		banksInOrder.push( [wordbank, settings.order] );
 	});
+		
 	// append the banks in order based on meta data
 	banksInOrder.sort( function(a,b){ return a[1] - b[1]; } );
 	var $bankContent = $("#oss > div[data-role=content]");
 	$.each( banksInOrder, function(index, value){
 		$bankContent.append( $("#"+value[0]) );
-		$bankContent.append(  $("#oss .addthis_toolbox") );
 	});
 	
 	$("#exact").attr("checked", oss.exact);
 
 
 	
+	function getActiveBankIds() {
+		var activeIds = [];
+		$.each( oss.wordBanks, function(wordbank, settings){
+			if( oss.wordBanks[wordbank].active ) {
+				activeIds.push( ossNameIdMap[wordbank] );	
+			}
+		});
+		return activeIds;
+	}
+	
+	function updateSearchLink( query ) {
+		var searchUrl = location.protocol + "//" + location.host + location.pathname 
+			+ "?q=" + query + "&b=" + getActiveBankIds().join("|")
+			+ "&e=" + (oss.exact ? "t" : "f");
+		$( "#searchlink" ).attr( "href", searchUrl );
+		$( "#searchlink" ).show();
+	}
+
+	function getQueryString() {  // snatched from http://stackoverflow.com/questions/647259/javascript-query-string/647272#647272
+		var result = {}, queryString = location.search.substring(1),
+			re = /([^&=]+)=([^&]*)/g, m;
+
+		while (m = re.exec(queryString)) {
+			result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+		}
+		return result;
+	}
+	
 	function saveStateToLocalStorage() {
 		if( isLocalStorage ) {
 			localStorage["ordasafnasafn"] = JSON.stringify( oss );
 		}
 	}
+	
 	
 	function searchWordbank( $wordBank ) {
 		var query = $("#query").val();
@@ -167,6 +242,8 @@ $(function(){
 				}
 			});			
 		}
+		
+		updateSearchLink( query );
 	}
 	
 	function updateOrderMetaData() {
@@ -224,14 +301,15 @@ $(function(){
 	
 	$("#search").submit(function(event){
 		searchWordbanks();
+		
 		return false;
 	});
 	
 	$("#exact").change(function(event){
+		oss.exact = $(this).is(":checked");
 		if( $("#query").val() ) {
 			$("#search").submit();
 		}
-		oss.exact = $(this).is(":checked");
 		saveStateToLocalStorage();
 	});
 	
@@ -247,41 +325,33 @@ $(function(){
 			$wordBank = $currentSwitch.closest("ul");
 			var ordasafn = $wordBank.attr("id");
 			if( $currentSwitch.val() == "on" ) {
-				searchWordbank( $wordBank );
 				updateWordbankPosition( $wordBank, true );
 				oss.wordBanks[ordasafn].active = true;
+				searchWordbank( $wordBank );
 			} else {
 				$currentSwitch.closest("ul").find(".results, .searching").remove();
 				updateWordbankPosition( $wordBank, false );
 				oss.wordBanks[ordasafn].active = false;
+				updateSearchLink( $("#query").val() );
 			}
 			saveStateToLocalStorage(); //called unnecessarily often due to asynchronisity in updateWordbankPosition() above
 		}
 		switchState[$currentSwitch.attr("id")] = $currentSwitch.val();
 	});
-		
 
-		
-	function getQueryString() {  // snatched from http://stackoverflow.com/questions/647259/javascript-query-string/647272#647272
-		var result = {}, queryString = location.search.substring(1),
-			re = /([^&=]+)=([^&]*)/g, m;
 
-		while (m = re.exec(queryString)) {
-			result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-		}
-		return result;
-	}
-
+	
 	//TODO: look at:  http://jquerymobile.com/test/docs/pages/page-dynamic.html
 	// let's make sure the page is initialized... 
 	$("#oss").page();
+	$("#searchlink").hide();
+	
 	// ...before we call methods to refresh it's widgets:
-	var query = getQueryString()["query"];
+	var query = getQueryString()["q"];
 	if( query ) {
 		$("#query").val( query );
 		searchWordbanks();
-	}		
-
+	}
 
 	
 	
