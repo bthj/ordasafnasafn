@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-22 19:57+0000\n"
+"POT-Creation-Date: 2012-02-28 16:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,46 +17,82 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: ordasafnasafn.py:26
+#: ordasafnasafn.py:27
 msgid "Wordbank search aggregator"
 msgstr ""
 
-#: ordasafnasafn.py:27
+#: ordasafnasafn.py:28
 msgid "Search"
 msgstr ""
 
-#: ordasafnasafn.py:28
+#: ordasafnasafn.py:29
 msgid "exact"
 msgstr ""
 
-#: ordasafnasafn.py:29
-msgid "On"
-msgstr ""
-
 #: ordasafnasafn.py:30
-msgid "Off"
+msgid "searchLink"
 msgstr ""
 
 #: ordasafnasafn.py:31
-msgid "About"
+msgid "On"
 msgstr ""
 
 #: ordasafnasafn.py:32
-msgid "About the wordbank search aggregator"
+msgid "Off"
 msgstr ""
 
 #: ordasafnasafn.py:33
-msgid "aboutContents1"
+msgid "About"
 msgstr ""
 
 #: ordasafnasafn.py:34
-msgid "aboutContents2"
+msgid "About the wordbank search aggregator"
 msgstr ""
 
 #: ordasafnasafn.py:35
-msgid "aboutContents3"
+msgid "aboutContents1"
 msgstr ""
 
 #: ordasafnasafn.py:36
+msgid "aboutContents2"
+msgstr ""
+
+#: ordasafnasafn.py:37
+msgid "aboutContents3"
+msgstr ""
+
+#: ordasafnasafn.py:38
 msgid "aboutContents4"
+msgstr ""
+
+#: ordasafnasafn.py:40
+msgid "titleSettings"
+msgstr ""
+
+#: ordasafnasafn.py:41
+msgid "legendInterfaceLanguage"
+msgstr ""
+
+#: ordasafnasafn.py:42
+msgid "English"
+msgstr ""
+
+#: ordasafnasafn.py:43
+msgid "Icelandic"
+msgstr ""
+
+#: ordasafnasafn.py:44
+msgid "Continue"
+msgstr ""
+
+#: ordasafnasafn.py:45
+msgid "titleCharges"
+msgstr ""
+
+#: ordasafnasafn.py:46
+msgid "chargesHeading"
+msgstr ""
+
+#: ordasafnasafn.py:47
+msgid "chargesContents"
 msgstr ""

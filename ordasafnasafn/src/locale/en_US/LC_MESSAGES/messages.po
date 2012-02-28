@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-22 19:57+0000\n"
+"POT-Creation-Date: 2012-02-28 16:38+0000\n"
 "PO-Revision-Date: 2012-02-22 18:05+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en_US <LL@li.org>\n"
@@ -18,47 +18,91 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: ordasafnasafn.py:26
+#: ordasafnasafn.py:27
 msgid "Wordbank search aggregator"
 msgstr ""
 
-#: ordasafnasafn.py:27
+#: ordasafnasafn.py:28
 msgid "Search"
 msgstr "Search"
 
-#: ordasafnasafn.py:28
+#: ordasafnasafn.py:29
 msgid "exact"
 msgstr "exact"
 
-#: ordasafnasafn.py:29
+#: ordasafnasafn.py:30
+msgid "searchLink"
+msgstr "Link to this search"
+
+#: ordasafnasafn.py:31
 msgid "On"
 msgstr "On"
 
-#: ordasafnasafn.py:30
+#: ordasafnasafn.py:32
 msgid "Off"
 msgstr "Off"
 
-#: ordasafnasafn.py:31
+#: ordasafnasafn.py:33
 msgid "About"
 msgstr "About"
 
-#: ordasafnasafn.py:32
+#: ordasafnasafn.py:34
 msgid "About the wordbank search aggregator"
 msgstr "About the wordbank search aggregator"
 
-#: ordasafnasafn.py:33
-msgid "aboutContents1"
-msgstr "The wordbank search aggregator provides an interface to search in several Icelandic wordbanks and dictionaries in parallel and so aims to provide an easy access to those distributed resources."
-
-#: ordasafnasafn.py:34
-msgid "aboutContents2"
-msgstr "Comments on this application can be posted in the <a href=\"http://code.google.com/p/ordasafnasafn/issues/list\">project issue tracker</a>."
-
 #: ordasafnasafn.py:35
+msgid "aboutContents1"
+msgstr ""
+"The wordbank search aggregator provides an interface to search in several"
+" Icelandic wordbanks and dictionaries in parallel and so aims to provide "
+"an easy access to those distributed resources."
+
+#: ordasafnasafn.py:36
+msgid "aboutContents2"
+msgstr ""
+"Comments on this application can be posted in the <a "
+"href=\"http://code.google.com/p/ordasafnasafn/issues/list\">project issue"
+" tracker</a>."
+
+#: ordasafnasafn.py:37
 msgid "aboutContents3"
 msgstr "&nbsp;"
 
-#: ordasafnasafn.py:36
+#: ordasafnasafn.py:38
 msgid "aboutContents4"
 msgstr "&nbsp;"
+
+#: ordasafnasafn.py:40
+msgid "titleSettings"
+msgstr "Settings"
+
+#: ordasafnasafn.py:41
+msgid "legendInterfaceLanguage"
+msgstr "Interface language"
+
+#: ordasafnasafn.py:42
+msgid "English"
+msgstr "English"
+
+#: ordasafnasafn.py:43
+msgid "Icelandic"
+msgstr "Icelandic"
+
+#: ordasafnasafn.py:44
+msgid "Continue"
+msgstr "Continue"
+
+#: ordasafnasafn.py:45
+msgid "titleCharges"
+msgstr "Charges"
+
+#: ordasafnasafn.py:46
+msgid "chargesHeading"
+msgstr "Welcome to the Icelandic wordbank search aggregator!"
+
+#: ordasafnasafn.py:47
+msgid "chargesContents"
+msgstr ""
+"Please note that each search performed involves access to the network.  "
+"Data charges may apply."
 

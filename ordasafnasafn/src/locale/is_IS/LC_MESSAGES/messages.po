@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-22 19:57+0000\n"
+"POT-Creation-Date: 2012-02-28 16:38+0000\n"
 "PO-Revision-Date: 2012-02-22 18:05+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: is_IS <LL@li.org>\n"
@@ -18,39 +18,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: ordasafnasafn.py:26
+#: ordasafnasafn.py:27
 msgid "Wordbank search aggregator"
 msgstr "Orðasafnasafn"
 
-#: ordasafnasafn.py:27
+#: ordasafnasafn.py:28
 msgid "Search"
 msgstr "Leita"
 
-#: ordasafnasafn.py:28
+#: ordasafnasafn.py:29
 msgid "exact"
 msgstr "orðrétt"
 
-#: ordasafnasafn.py:29
+#: ordasafnasafn.py:30
+msgid "searchLink"
+msgstr "Slóð að þessari leit"
+
+#: ordasafnasafn.py:31
 msgid "On"
 msgstr "Á"
 
-#: ordasafnasafn.py:30
+#: ordasafnasafn.py:32
 msgid "Off"
 msgstr "Af"
 
-#: ordasafnasafn.py:31
+#: ordasafnasafn.py:33
 msgid "About"
 msgstr "Um"
 
-#: ordasafnasafn.py:32
+#: ordasafnasafn.py:34
 msgid "About the wordbank search aggregator"
 msgstr "Um orðasafnasafn"
 
-#: ordasafnasafn.py:33
+#: ordasafnasafn.py:35
 msgid "aboutContents1"
 msgstr "Orðasafnasafn er leitarviðmót fyrir íslenska orðabanka."
 
-#: ordasafnasafn.py:34
+#: ordasafnasafn.py:36
 msgid "aboutContents2"
 msgstr ""
 "Viðmótið gerir leit handhæga frá einum stað í þeim mörgu opnu orðabönkum "
@@ -58,7 +62,7 @@ msgstr ""
 "borðtölvu- sem snjallsímaskjái og því aðgengilegt við sem flestar "
 "aðstæður."
 
-#: ordasafnasafn.py:35
+#: ordasafnasafn.py:37
 msgid "aboutContents3"
 msgstr ""
 "Orðasafnasafn er <a href=\"http://bthj.is/category/oss/\">gæluverkefni "
@@ -67,8 +71,44 @@ msgstr ""
 "og til þess fallið að opna enn frekar aðgengi að þeim upplýsingum sem "
 "orðabankarnir geyma."
 
-#: ordasafnasafn.py:36
+#: ordasafnasafn.py:38
 msgid "aboutContents4"
 msgstr ""
-"Ábendingar má gjarnan skrá í <a href=\"http://code.google.com/p/ordasafnasafn/issues/list\">verkefnalista OSS</a>."
+"Ábendingar má gjarnan skrá í <a "
+"href=\"http://code.google.com/p/ordasafnasafn/issues/list\">verkefnalista"
+" OSS</a>."
+
+#: ordasafnasafn.py:40
+msgid "titleSettings"
+msgstr "Stillingar"
+
+#: ordasafnasafn.py:41
+msgid "legendInterfaceLanguage"
+msgstr "Tungumál viðmóts"
+
+#: ordasafnasafn.py:42
+msgid "English"
+msgstr "enska"
+
+#: ordasafnasafn.py:43
+msgid "Icelandic"
+msgstr "íslenska"
+
+#: ordasafnasafn.py:44
+msgid "Continue"
+msgstr "Halda áfram"
+
+#: ordasafnasafn.py:45
+msgid "titleCharges"
+msgstr "Gagnanotkun"
+
+#: ordasafnasafn.py:46
+msgid "chargesHeading"
+msgstr "Velkomin í Orðasafnasafnið!"
+
+#: ordasafnasafn.py:47
+msgid "chargesContents"
+msgstr ""
+"Vinsamlegast athugaðu að hver leit felur í sér netsamskipti og gjöld "
+"fyrir gagnanotkun geta komið til."
 

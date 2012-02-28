@@ -2,12 +2,17 @@
 $(document).bind("mobileinit", function(){
 	$.mobile.page.prototype.options.addBackBtn = true;
 	$.mobile.page.prototype.options.backBtnText = "Til baka";
+	
+	$.mobile.allowCrossDomainPages = true;
 });
 
 var addthis_config = {
 	services_exclude : "print",
 	data_track_clickback: false
 }
+
+
+
 
 $(function(){
 	var oss = null;
@@ -33,6 +38,8 @@ $(function(){
 			"SearchMalfar" : 6, 
 			"SearchRitmalaskra" : 7 
 	};
+	
+	var defaultLocale = "en";
 	
 
 	try {
@@ -97,6 +104,13 @@ $(function(){
 	
 	
 	
+	var localeFromQuery = getQueryString()["locale"];
+	if( localeFromQuery ) {
+		saveLocale( localeFromQuery )
+	}
+
+		
+	
 	var banksInOrder = [];
 	// update flip toggles
 	$.each( oss.wordBanks, function(wordbank, settings){
@@ -118,7 +132,17 @@ $(function(){
 	
 	$("#exact").attr("checked", oss.exact);
 
-
+	
+	
+	function saveLocale( locale ) {
+		oss.locale = locale;
+		saveStateToLocalStorage();
+	}
+	function applyLocale( locale ) {
+		var opts = { language: locale, pathPrefix: "/static/lang" };
+		$("[rel*=localize]").localize("oss", opts);
+	}
+	
 	
 	function getActiveBankIds() {
 		var activeIds = [];
@@ -131,13 +155,17 @@ $(function(){
 	}
 	
 	function updateSearchLink( query ) {
-		var searchUrl = location.protocol + "//" + location.host + location.pathname 
-			+ "?q=" + query + "&b=" + getActiveBankIds().join("|")
-			+ "&e=" + (oss.exact ? "t" : "f");
-		$( "#searchlink" ).attr( "href", searchUrl );
-		$( "#searchlink" ).show();
+		if( query ) {
+			// var searchUrl = location.protocol + "//" + location.host + location.pathname
+			var searchUrl = "http://oss.nemur.net/"
+				+ "?q=" + query + "&b=" + getActiveBankIds().join("|")
+				+ "&e=" + (oss.exact ? "t" : "f");
+			$( "#searchlink" ).attr( "href", searchUrl );
+			$( "#searchlink" ).show();			
+		}
 	}
 
+	
 	function getQueryString() {  // snatched from http://stackoverflow.com/questions/647259/javascript-query-string/647272#647272
 		var result = {}, queryString = location.search.substring(1),
 			re = /([^&=]+)=([^&]*)/g, m;
@@ -162,7 +190,7 @@ $(function(){
 			$wordBank.find(".results").remove();
 			$wordBank.find(".searching").remove();
 			var liSearching = $('<li/>', {'class': 'searching'});
-			var h4 = $('<h4/>').append('<em>Leita...</em>');
+			var h4 = $('<h4/>').append('<em>'+$.localize.data.oss['Searching']+'...</em>');
 			liSearching.append(h4);
 			$wordBank.append( liSearching ).listview("refresh");
 			
@@ -338,8 +366,34 @@ $(function(){
 		}
 		switchState[$currentSwitch.attr("id")] = $currentSwitch.val();
 	});
+	
+	
+	
+	$("input[name=interface-language]").change(function(event){
+		
+		saveLocale( $(this).val() );
+		
+		window.location.reload(false);
+		
+		/*
+		if( $(this).val() == 'en_US' ) {
+			$("#settings-continue-btn").prop("href", "/?locale=en_US");
+		} else {
+			$("#settings-continue-btn").prop("href", "/?locale=is_IS");
+		}
+		*/
+	});
 
+	
 
+	$( '#oss' ).bind( 'pagebeforecreate',function(event){
+		if( ! oss.locale ) {
+			saveLocale( defaultLocale );
+		}
+		applyLocale( oss.locale );
+	});	
+	
+	
 	
 	//TODO: look at:  http://jquerymobile.com/test/docs/pages/page-dynamic.html
 	// let's make sure the page is initialized... 
@@ -352,6 +406,17 @@ $(function(){
 		$("#query").val( query );
 		searchWordbanks();
 	}
+
+	
+	
+	$("div#oss").live('pageshow', function(event,ui){
+		// let's open a dialog with data charges alert if not opened before
+		if( isLocalStorage && ! localStorage["ossIsChargeInfoDisplayed"] ) {
+			$.mobile.changePage( "#charges", { transition: "pop", role: "dialog", reverse: false }  );
+			localStorage["ossIsChargeInfoDisplayed"] = true;
+		}		
+	});
+
 
 	
 	

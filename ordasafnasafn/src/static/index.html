@@ -1,7 +1,7 @@
 <!DOCTYPE html> 
 <html> 
 	<head> 
-	<title rel="localize[title]">{{title}}</title> 
+	<title rel="localize[title]">Wordbank search aggregator</title> 
 	
 	<meta name="description" content="Orðasafnasafn safnar opnum orðasöfnum í eitt leitarviðmót." />
 	<meta name="keywords" content="orðasafn, orðabankar, leit, dictionary, íslensk, Icelandic" />
@@ -9,17 +9,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="apple-mobile-web-app-capable" content="yes" /> 
 	
-	<link rel="icon" href="/static/img/oss_48x48.png" />
-	<link rel="apple-touch-icon" href="/static/img/oss_128x128.png"/>
-	<link rel="apple-touch-icon-precomposed" href="/static/img/oss_128x128.png"/>
+	<link rel="icon" href="img/oss_48x48.png" />
+	<link rel="apple-touch-icon" href="img/oss_128x128.png"/>
+	<link rel="apple-touch-icon-precomposed" href="img/oss_128x128.png"/>
 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-	<script type="text/javascript" src="/static/js/bookmark_bubble2.js"></script>
+	<script type="text/javascript" src="js/bookmark_bubble2.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
-	<script src="/static/js/jquery.localize.js" type="text/javascript" charset="utf-8"></script>
-	<script type="text/javascript" src="/static/js/oss.js"></script>
+	<script src="js/jquery.localize.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="js/oss.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
-	
 	
 	<style type="text/css">
 		.ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
@@ -50,14 +49,10 @@
 <div data-role="page" id="oss">
 
 	<div data-role="header">
-		<h1 rel="localize[title]">{{title}}</h1>
+		<h1 rel="localize[title]">Wordbank search aggregator</h1>
 		<a href="#settings" data-rel="dialog" data-icon="grid" 
 			data-transition="slidedown" class="ui-btn-right" rel="localize[locale]">
-			{% if locale == 'en_US' %}
 				EN
-			{% else %}
-				IS
-			{% endif %}
 			</a>
 	</div><!-- /header -->
 
@@ -71,17 +66,17 @@
 			  	<a href="/" target="_blank" id="searchlink" data-role="button" 
 			  			data-icon="star" data-iconpos="notext" data-theme="d"
 			  			rel="localize[searchLink]">
-			  		{{searchLink}}
+			  		Link to this search
 			  	</a>
 			  </label>
 			  
 			  <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
 
-			    <input type="submit" value="{{Search}}" data-theme="b" 
+			    <input type="submit" value="Search" data-theme="b" 
 			    	data-icon="search" data-iconpos="right" data-inline="true" rel="localize[Search]" />
 			    	
 			    <input type="checkbox" name="exact" id="exact" data-inline="true" />
-			    <label for="exact" rel="localize[exact]">{{exact}}</label>
+			    <label for="exact" rel="localize[exact]">exact</label>
 			    
 			  </fieldset>
 			</form>
@@ -98,8 +93,8 @@
 					</a>
 				</label>
 				<select name="SearchHugtakasafn" id="hts-slider" data-role="slider">
-					<option value="off" rel="localize[Off]">{{Off}}</option>
-					<option value="on" rel="localize[On]">{{On}}</option>
+					<option value="off" rel="localize[Off]">Off</option>
+					<option value="on" rel="localize[On]">On</option>
 				</select>
 			</li>
 		</ul>
@@ -113,8 +108,8 @@
 					</a>
 				</label>
 				<select name="SearchIsmal" id="ismal-slider" data-role="slider">
-					<option value="off" rel="localize[Off]">{{Off}}</option>
-					<option value="on" rel="localize[On]">{{On}}</option>
+					<option value="off" rel="localize[Off]">Off</option>
+					<option value="on" rel="localize[On]">On</option>
 				</select>
 			</li>
 		</ul>
@@ -126,8 +121,8 @@
 					<a href="http://tos.sky.is/" target="_blank">T&ouml;lvuor&eth;asafn</a>
 				</label>
 				<select name="SearchTos" id="tos-slider" data-role="slider">
-					<option value="off" rel="localize[Off]">{{Off}}</option>
-					<option value="on" rel="localize[On]">{{On}}</option>
+					<option value="off" rel="localize[Off]">Off</option>
+					<option value="on" rel="localize[On]">On</option>
 				</select>
 			</li>
 		</ul>
@@ -141,8 +136,8 @@
 					</a>
 				</label>
 				<select name="SearchBin" id="bin-slider" data-role="slider">
-					<option value="off" rel="localize[Off]">{{Off}}</option>
-					<option value="on" rel="localize[On]">{{On}}</option>
+					<option value="off" rel="localize[Off]">Off</option>
+					<option value="on" rel="localize[On]">On</option>
 				</select>
 			</li>
 		</ul>
@@ -154,8 +149,8 @@
 					<a href="http://www.hafro.is/ordabok/" target="_blank">Sj&aacute;vard&yacute;raor&eth;ab&oacute;k</a>
 				</label>
 				<select name="SearchHafro" id="hafro-slider" data-role="slider">
-					<option value="off" rel="localize[Off]">{{Off}}</option>
-					<option value="on" rel="localize[On]">{{On}}</option>
+					<option value="off" rel="localize[Off]">Off</option>
+					<option value="on" rel="localize[On]">On</option>
 				</select>
 			</li>
 		</ul>
@@ -169,8 +164,8 @@
 					</a>
 				</label>
 				<select name="SearchMalfar" id="malfar-slider" data-role="slider">
-					<option value="off" rel="localize[Off]">{{Off}}</option>
-					<option value="on" rel="localize[On]">{{On}}</option>
+					<option value="off" rel="localize[Off]">Off</option>
+					<option value="on" rel="localize[On]">On</option>
 				</select>
 			</li>
 		</ul>
@@ -184,8 +179,8 @@
 					</a>
 				</label>
 				<select name="SearchRitmalaskra" id="ritmalaskra-slider" data-role="slider">
-					<option value="off" rel="localize[Off]">{{Off}}</option>
-					<option value="on" rel="localize[On]">{{On}}</option>
+					<option value="off" rel="localize[Off]">Off</option>
+					<option value="on" rel="localize[On]">On</option>
 				</select>
 			</li>
 		</ul>
@@ -194,25 +189,27 @@
 	</div><!-- /content -->
 
 	<div data-role="footer">
-		<h4><a href="#umoss" rel="localize[About]">{{About}}</a></h4>
+		<h4><a href="#umoss" rel="localize[About]">About</a></h4>
 	</div><!-- /footer -->
 
 </div><!-- /page -->
 
 <div data-role="page" id="umoss">
 	<div data-role="header">
-		<h1 rel="localize[titleAbout]">{{titleAbout}}</h1>
+		<h1 rel="localize[titleAbout]">About the wordbank search aggregator</h1>
 	</div>
 	<div data-role="content">
-		<p rel="localize[aboutContents1]">{{aboutContents1|safe}}</p>
+		<p rel="localize[aboutContents1]">
+			The wordbank search aggregator provides an interface to search in several Icelandic wordbanks and dictionaries in parallel and so aims to provide an easy access to those distributed resources.
+		</p>
 		<p rel="localize[aboutContents2]">
-			{{aboutContents2|safe}}
+			Comments on this application can be posted in the <a href=\"http://code.google.com/p/ordasafnasafn/issues/list\">project issue tracker</a>.
 		</p>
 		<p rel="localize[aboutContents3]">
-			{{aboutContents3|safe}}
+			&nbsp;
 		</p>
 		<p rel="localize[aboutContents4]">
-			{{aboutContents4|safe}}
+			&nbsp;
 		</p>
 	</div>
 	<div data-role="footer">
@@ -222,18 +219,18 @@
 
 <div data-role="page" id="settings">
 	<div data-role="header">
-		<h1 rel="localize[titleSettings]">{{titleSettings}}</h1>
+		<h1 rel="localize[titleSettings]">Settings</h1>
 	</div>
 	<div data-role="content">
 		<fieldset data-role="controlgroup">
-			<legend rel="localize[legendInterfaceLanguage]">{{legendInterfaceLanguage}}:</legend>
+			<legend rel="localize[legendInterfaceLanguage]">Interface language:</legend>
 			<input type="radio" name="interface-language" id="interface-language-en" value="en"
 				{% if locale == 'en_US' %} checked="checked" {% endif %} />
-			<label for="interface-language-en" rel="localize[English]">{{English}}</label>
+			<label for="interface-language-en" rel="localize[English]">English</label>
 			
 			<input type="radio" name="interface-language" id="interface-language-is" value="is"
 				{% if locale != 'en_US' %} checked="checked" {% endif %} />
-			<label for="interface-language-is" rel="localize[Icelandic]">{{Icelandic}}</label>
+			<label for="interface-language-is" rel="localize[Icelandic]">Icelandic</label>
 		</fieldset>
 <!--		<a href="#oss" id="settings-continue-btn" data-role="button" rel="localize[Continue]">Continue</a>-->
 <!--		<a href="/?locale={% if locale %}{{locale}}{% else %}is_IS{% endif %}" id="settings-continue-btn"-->
@@ -243,12 +240,12 @@
 
 <div data-role="page" id="charges">
 	<div data-role="header">
-		<h1 rel="localize[titleCharges]">{{titleCharges}}</h1>
+		<h1 rel="localize[titleCharges]">Charges</h1>
 	</div>
 	<div data-role="content">
-		<h2 rel="localize[chargesHeading]">{{chargesHeading}}</h2>
-		<p rel="localize[chargesContents]">{{chargesContents}}</p>
-		<a href="#oss" data-role="button" rel="localize[Continue]">{{Continue}}</a>
+		<h2 rel="localize[chargesHeading]">Welcome to the Icelandic wordbank search aggregator!</h2>
+		<p rel="localize[chargesContents]">Please note that each search performed involves access to the network.  Data charges may apply.</p>
+		<a href="#oss" data-role="button" rel="localize[Continue]">Continue</a>
 	</div>
 </div>
 	

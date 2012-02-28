@@ -1,7 +1,10 @@
-#Mon Sep 19 19:04:32 GMT 2011
+#Tue Feb 28 23:46:49 GMT 2012
 eclipse.preferences.version=1
 encoding//src/index.html=UTF-8
+encoding//src/locale/is_IS/LC_MESSAGES/messages.po=UTF-8
 encoding//src/ordasafnasafn.py=UTF-8
 encoding//src/search-input.html=UTF-8
 encoding//src/static/js/bookmark_bubble2.js=UTF-8
 encoding//src/static/js/oss.js=UTF-8
+encoding//src/static/lang/oss-en.json=UTF-8
+encoding//src/static/lang/oss-is.json=UTF-8
