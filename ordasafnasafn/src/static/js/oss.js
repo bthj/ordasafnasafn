@@ -232,7 +232,7 @@ $(function(){
 									textLegend = oneEntry.textlegend;
 								}
 								if( oneEntry.link ) {
-									var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank">', '</a></li>'];
+									var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank" rel="external">', '</a></li>'];
 									if( oneEntry.html ) {
 										litems.push( litemParts.join( oneEntry.html ) );
 									} else {
