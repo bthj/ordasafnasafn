@@ -14,6 +14,8 @@
 	<link rel="apple-touch-icon-precomposed" href="img/oss_128x128.png"/>
 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	
+	<script src="phonegap.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" src="js/bookmark_bubble2.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
 	<script src="js/jquery.localize.js" type="text/javascript" charset="utf-8"></script>
@@ -72,7 +74,7 @@
 			  
 			  <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
 
-			    <input type="submit" value="Search" data-theme="b" 
+			    <input type="submit" value="Search" id="search-btn" data-theme="b" 
 			    	data-icon="search" data-iconpos="right" data-inline="true" rel="localize[Search]" />
 			    	
 			    <input type="checkbox" name="exact" id="exact" data-inline="true" />
@@ -224,12 +226,10 @@
 	<div data-role="content">
 		<fieldset data-role="controlgroup">
 			<legend rel="localize[legendInterfaceLanguage]">Interface language:</legend>
-			<input type="radio" name="interface-language" id="interface-language-en" value="en"
-				{% if locale == 'en_US' %} checked="checked" {% endif %} />
+			<input type="radio" name="interface-language" id="interface-language-en" value="en" />
 			<label for="interface-language-en" rel="localize[English]">English</label>
 			
-			<input type="radio" name="interface-language" id="interface-language-is" value="is"
-				{% if locale != 'en_US' %} checked="checked" {% endif %} />
+			<input type="radio" name="interface-language" id="interface-language-is" value="is" />
 			<label for="interface-language-is" rel="localize[Icelandic]">Icelandic</label>
 		</fieldset>
 <!--		<a href="#oss" id="settings-continue-btn" data-role="button" rel="localize[Continue]">Continue</a>-->

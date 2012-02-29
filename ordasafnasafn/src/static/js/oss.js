@@ -41,6 +41,13 @@ $(function(){
 	
 	var defaultLocale = "en";
 	
+	
+	if( typeof(PhoneGap) == 'undefined' ) {
+		var hostUrl = location.protocol + "//" + location.host + location.pathname;
+	} else {
+		var hostUrl = "http://oss.nemur.net/";
+	}
+	
 
 	try {
 		var isLocalStorage = ('localStorage' in window && window['localStorage'] !== null);
@@ -141,6 +148,9 @@ $(function(){
 	function applyLocale( locale ) {
 		var opts = { language: locale, pathPrefix: "/static/lang" };
 		$("[rel*=localize]").localize("oss", opts);
+		
+		$("#search-btn").val( $.localize.data.oss['Search'] );
+		$('input:radio[name=interface-language]').filter('[value='+locale+']').attr('checked', true);
 	}
 	
 	
@@ -154,10 +164,11 @@ $(function(){
 		return activeIds;
 	}
 	
+	
 	function updateSearchLink( query ) {
 		if( query ) {
 			// var searchUrl = location.protocol + "//" + location.host + location.pathname
-			var searchUrl = "http://oss.nemur.net/"
+			var searchUrl = hostUrl
 				+ "?q=" + query + "&b=" + getActiveBankIds().join("|")
 				+ "&e=" + (oss.exact ? "t" : "f");
 			$( "#searchlink" ).attr( "href", searchUrl );
@@ -198,7 +209,7 @@ $(function(){
 			$.ajax({
 				type: 'GET',
 				dataType: 'json',
-				url: '/search', 
+				url: hostUrl + 'search', 
 				data: { 'ordasafn' : ordasafn, 'q' : query, 'exact' : exact },
 				success: function(data){
 					$wordBank.find(".searching").remove();
@@ -420,44 +431,47 @@ $(function(){
 
 	
 	
-	// mobile bookmark bubble init
-	window.setTimeout(
-		function() {
-			var bubble = new google.bookmarkbubble.Bubble();
+	if( typeof(PhoneGap) == 'undefined' ) {
+		// mobile bookmark bubble init
+		window.setTimeout(
+			function() {
+				var bubble = new google.bookmarkbubble.Bubble();
 
-			var parameter = 'bmb=1';
+				var parameter = 'bmb=1';
 
-			bubble.hasHashParameter = function() {
-				return window.location.hash.indexOf(parameter) != -1;
-			};
+				bubble.hasHashParameter = function() {
+					return window.location.hash.indexOf(parameter) != -1;
+				};
 
-			bubble.setHashParameter = function() {
-//				if (!this.hasHashParameter()) {
-//					window.location.hash += parameter;
-//				}
-			};
+				bubble.setHashParameter = function() {
+//					if (!this.hasHashParameter()) {
+//						window.location.hash += parameter;
+//					}
+				};
 
-			bubble.getViewportHeight = function() {
-//				window.console.log('Example of how to override getViewportHeight.');
-				return window.innerHeight;
-			};
+				bubble.getViewportHeight = function() {
+//					window.console.log('Example of how to override getViewportHeight.');
+					return window.innerHeight;
+				};
 
-			bubble.getViewportScrollY = function() {
-//				window.console.log('Example of how to override getViewportScrollY.');
-				return window.pageYOffset;
-			};
+				bubble.getViewportScrollY = function() {
+//					window.console.log('Example of how to override getViewportScrollY.');
+					return window.pageYOffset;
+				};
 
-			bubble.registerScrollHandler = function(handler) {
-//				window.console.log('Example of how to override registerScrollHandler.');
-				window.addEventListener('scroll', handler, false);
-			};
+				bubble.registerScrollHandler = function(handler) {
+//					window.console.log('Example of how to override registerScrollHandler.');
+					window.addEventListener('scroll', handler, false);
+				};
 
-			bubble.deregisterScrollHandler = function(handler) {
-//				window.console.log('Example of how to override deregisterScrollHandler.');
-				window.removeEventListener('scroll', handler, false);
-			};
+				bubble.deregisterScrollHandler = function(handler) {
+//					window.console.log('Example of how to override deregisterScrollHandler.');
+					window.removeEventListener('scroll', handler, false);
+				};
 
-			bubble.showIfAllowed();
-		}, 2000);
+				bubble.showIfAllowed();
+			}, 2000);		
+	}
+
 
 });
