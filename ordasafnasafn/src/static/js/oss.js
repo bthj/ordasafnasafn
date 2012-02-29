@@ -48,6 +48,12 @@ $(function(){
 	} else {
 		var hostUrl = "http://oss.nemur.net/";
 		var localePathPrefix = "lang";
+		
+		$("a[rel=external]").live('click', function(event){
+			
+			navigator.app.loadUrl($(this).attr('href'), {openexternal:true});
+			return false;
+		});
 	}
 	
 
