@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns		= "http://www.w3.org/ns/widgets"
+	xmlns:gap	= "http://phonegap.com/ns/1.0"
+	id		= "net.nemur.oss"
+	version 	= "1.0.0">
+
+	<name>Icelandic wordbank search aggregator</name>
+
+	<description>
+		The Icelandic wordbank search aggregator provides an interface to search in several Icelandic wordbanks and dictionaries in parallel and so aims to provide an easy access to those distributed resources.
+	</description>
+
+	<author href="http://bthj.is"
+		email="bangsi@bthj.is">
+		Bjorn Thor Jonsson
+	</author>
+
+	<icon src="oss_128x128.png" gap:role="default" />
+
+	<feature name="http://api.phonegap.com/1.0/geolocation"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
+
+	<preference name="orientation" value="portrait" />
+</widget>
