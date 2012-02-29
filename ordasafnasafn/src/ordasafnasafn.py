@@ -10,7 +10,7 @@ from webapp2_extras import i18n
 from google.appengine.api import urlfetch
 
 from BeautifulSoup import BeautifulSoup, Tag
-import simplejson as json
+import json
 
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 #from google.appengine.dist import use_library

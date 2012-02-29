@@ -53,6 +53,14 @@ $(function(){
 			navigator.app.loadUrl($(this).attr('href'), {openexternal:true});
 			return false;
 		});
+		
+		$("div#oss").live('pageshow', function(event,ui){
+			// let's open a dialog with data charges alert if not opened before
+			if( isLocalStorage && ! localStorage["ossIsChargeInfoDisplayed"] ) {
+				$.mobile.changePage( "#charges", { transition: "pop", role: "dialog", reverse: false }  );
+				localStorage["ossIsChargeInfoDisplayed"] = true;
+			}		
+		});
 	}
 	
 
@@ -416,18 +424,7 @@ $(function(){
 		$("#query").val( query );
 		searchWordbanks();
 	}
-
 	
-	
-	$("div#oss").live('pageshow', function(event,ui){
-		// let's open a dialog with data charges alert if not opened before
-		if( isLocalStorage && ! localStorage["ossIsChargeInfoDisplayed"] ) {
-			$.mobile.changePage( "#charges", { transition: "pop", role: "dialog", reverse: false }  );
-			localStorage["ossIsChargeInfoDisplayed"] = true;
-		}		
-	});
-
-
 	
 	
 	if( typeof(PhoneGap) == 'undefined' ) {
