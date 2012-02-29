@@ -44,8 +44,10 @@ $(function(){
 	
 	if( typeof(PhoneGap) == 'undefined' ) {
 		var hostUrl = location.protocol + "//" + location.host + location.pathname;
+		var localePathPrefix = "/static/lang";
 	} else {
 		var hostUrl = "http://oss.nemur.net/";
+		var localePathPrefix = "lang";
 	}
 	
 
@@ -146,10 +148,9 @@ $(function(){
 		saveStateToLocalStorage();
 	}
 	function applyLocale( locale ) {
-		var opts = { language: locale, pathPrefix: "/static/lang" };
+		var opts = { language: locale, pathPrefix: localePathPrefix };
 		$("[rel*=localize]").localize("oss", opts);
 		
-		$("#search-btn").val( $.localize.data.oss['Search'] );
 		$('input:radio[name=interface-language]').filter('[value='+locale+']').attr('checked', true);
 	}
 	
@@ -384,15 +385,7 @@ $(function(){
 		
 		saveLocale( $(this).val() );
 		
-		window.location.reload(false);
-		
-		/*
-		if( $(this).val() == 'en_US' ) {
-			$("#settings-continue-btn").prop("href", "/?locale=en_US");
-		} else {
-			$("#settings-continue-btn").prop("href", "/?locale=is_IS");
-		}
-		*/
+		window.location.href = window.location.pathname;
 	});
 
 	
@@ -402,6 +395,7 @@ $(function(){
 			saveLocale( defaultLocale );
 		}
 		applyLocale( oss.locale );
+		$("#search-btn").attr( 'value', $.localize.data.oss['Search'] );
 	});	
 	
 	
