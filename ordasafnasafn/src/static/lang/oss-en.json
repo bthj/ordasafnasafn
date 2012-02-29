@@ -20,5 +20,6 @@
 	"chargesHeading" : "Welcome to the Icelandic wordbank search aggregator!",
 	"chargesContents" : "Please note that each search performed involves access to the network.  Data charges may apply.",
 	"locale" : "EN",
-	"Searching" : "Searching"
+	"Searching" : "Searching",
+	"Back" : "Back"
 }

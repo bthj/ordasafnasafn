@@ -6,12 +6,6 @@ $(document).bind("mobileinit", function(){
 	$.mobile.allowCrossDomainPages = true;
 });
 
-var addthis_config = {
-	services_exclude : "print",
-	data_track_clickback: false
-}
-
-
 
 
 $(function(){
@@ -164,7 +158,10 @@ $(function(){
 		var opts = { language: locale, pathPrefix: localePathPrefix };
 		$("[rel*=localize]").localize("oss", opts);
 		
+		
 		$('input:radio[name=interface-language]').filter('[value='+locale+']').attr('checked', true);
+		
+		$.mobile.page.prototype.options.backBtnText = $.localize.data.oss['Back'];
 	}
 	
 	
@@ -212,8 +209,20 @@ $(function(){
 		var query = $("#query").val();
 		var exact = $("#exact").is(':checked');
 		if( query ) {
-			$wordBank.find(".results").remove();
+			$wordBank.find(".results").each(function(){
+				var nestedListLink = $(this).find("a:first");
+				$(this).remove();
+				// hack to remove divs for nested lists from previous results - should be removed by the JQM framework?
+				var dataUrl = nestedListLink.attr("href").substring(1);
+				$("div[data-role=page]").each(function(){
+					if( $(this).attr("data-url") == dataUrl ) {
+						$(this).remove();
+					}
+				});
+			});
+//			$wordBank.find(".results").remove();			
 			$wordBank.find(".searching").remove();
+			
 			var liSearching = $('<li/>', {'class': 'searching'});
 			var h4 = $('<h4/>').append('<em>'+$.localize.data.oss['Searching']+'...</em>');
 			liSearching.append(h4);
