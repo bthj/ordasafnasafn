@@ -7,9 +7,7 @@
 	<name>Orðasafnasafn - Icelandic Word Bank Search Aggregator</name>
 
 	<description>
-		The Icelandic word bank search aggregator provides an interface to search in several Icelandic word banks and dictionaries in parallel and so aims to provide an easy access to those distributed resources.
-		//
-		Orðasafnasafn er leitarviðmót fyrir íslenska orðabanka.  Viðmótið gerir leit handhæga frá einum stað í þeim mörgu opnu orðabönkum sem eru hýstir á vefjum stofnana.
+		The Icelandic word bank search aggregator provides an interface to search in several Icelandic word banks and dictionaries in parallel and so aims to provide an easy access to those distributed resources.  //  Orðasafnasafn er leitarviðmót fyrir íslenska orðabanka.  Viðmótið gerir leit handhæga frá einum stað í þeim mörgu opnu orðabönkum sem eru hýstir á vefjum stofnana.
 	</description>
 
 	<author href="http://bthj.is"
@@ -17,9 +15,8 @@
 		Bjorn Thor Jonsson
 	</author>
 
-	<icon src="oss_128x128.png" gap:role="default" />
+	<icon src="img/oss_128x128.png" gap:role="default" />
 
-	<feature name="http://api.phonegap.com/1.0/geolocation"/>
 	<feature name="http://api.phonegap.com/1.0/network"/>
 
 	<preference name="orientation" value="portrait" />
