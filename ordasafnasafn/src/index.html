@@ -13,12 +13,12 @@
 	<link rel="apple-touch-icon" href="/static/img/oss_128x128.png"/>
 	<link rel="apple-touch-icon-precomposed" href="/static/img/oss_128x128.png"/>
 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css" />
 	<script type="text/javascript" src="/static/js/bookmark_bubble2.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 	<script src="/static/js/jquery.localize.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" src="/static/js/oss.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.js"></script>
 	
 	
 	<style type="text/css">
@@ -31,16 +31,25 @@
 		    right: 0;
 		    width: 40%;
 		}
-		
-		div.ui-btn { 
-			/* when updating to jquery 1.0.x the inline checkbox has a float property 
-				and we need to manually apply it to the submit button beside it */
-			float: left;
-		}
+
 		#searchlink { 
 			margin-top:0.4em;
 			margin-left:2em;
 			float:right;
+		}
+		
+		.ui-icon-oss-link {
+			background-image: url("/static/img/app-icon-link.png");
+		}
+		@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+			.ui-icon-oss-link {
+				background-image: url("/static/img/app-icon-link-highres.png");
+				background-size: 18px 18px;
+			}
+		}
+		
+		.applinks {
+			text-align: center;
 		}
 	</style>
 </head> 
@@ -69,21 +78,17 @@
 			  <input type="search" name="q" id="query" value="" data-inline="true" />
 			  <label for="query">
 			  	<a href="/" target="_blank" id="searchlink" data-role="button" 
-			  			data-icon="star" data-iconpos="notext" data-theme="d"
+			  			data-icon="oss-link" data-iconpos="notext" data-theme="d"
 			  			rel="localize[searchLink] external">
 			  		{{searchLink}}
 			  	</a>
 			  </label>
-			  
-			  <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
 
-			    <input type="submit" value="{{Search}}" data-theme="b" 
-			    	data-icon="search" data-iconpos="right" data-inline="true" rel="localize[Search]" />
-			    	
-			    <input type="checkbox" name="exact" id="exact" data-inline="true" />
-			    <label for="exact" rel="localize[exact]">{{exact}}</label>
-			    
-			  </fieldset>
+		    <input type="submit" value="{{Search}}" data-theme="b" 
+		    	data-icon="search" data-iconpos="right" data-inline="false" rel="localize[Search]" />
+		    	
+		    <input type="checkbox" name="exact" id="exact" data-inline="false" />
+		    <label for="exact" rel="localize[exact]">{{exact}}</label>
 			</form>
 			
 		</div>
@@ -189,7 +194,13 @@
 				</select>
 			</li>
 		</ul>
-		
+
+
+		<div class="applinks">
+			<a href="https://play.google.com/store/apps/details?id=net.nemur.oss"><img src="/static/img/android_app_on_play_large.png" /></a>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="http://appworld.blackberry.com/webstore/content/93337/"><img src="/static/img/BBAppWorld_getitat_black_x60.png" /></a>
+		</div>		
 
 	</div><!-- /content -->
 

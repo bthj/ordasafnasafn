@@ -144,6 +144,7 @@ $(function(){
 	var $bankContent = $("#oss > div[data-role=content]");
 	$.each( banksInOrder, function(index, value){
 		$bankContent.append( $("#"+value[0]) );
+		$bankContent.append( $("#oss .applinks") );
 	});
 	
 	$("#exact").attr("checked", oss.exact);
@@ -209,6 +210,7 @@ $(function(){
 		var query = $("#query").val();
 		var exact = $("#exact").is(':checked');
 		if( query ) {
+			
 			$wordBank.find(".results").each(function(){
 				var nestedListLink = $(this).find("a:first");
 				$(this).remove();
@@ -220,14 +222,15 @@ $(function(){
 					}
 				});
 			});
-//			$wordBank.find(".results").remove();			
+
+//			$wordBank.find(".results").remove();
 			$wordBank.find(".searching").remove();
 			
 			var liSearching = $('<li/>', {'class': 'searching'});
 			var h4 = $('<h4/>').append('<em>'+$.localize.data.oss['Searching']+'...</em>');
 			liSearching.append(h4);
 			$wordBank.append( liSearching ).listview("refresh");
-			
+
 			var ordasafn = $wordBank.attr("id");
 			$.ajax({
 				type: 'GET',
@@ -362,6 +365,8 @@ $(function(){
 	}
 	
 	$("#search").submit(function(event){
+//		event.preventDefault();
+		
 		searchWordbanks();
 		
 		return false;
@@ -369,10 +374,10 @@ $(function(){
 	
 	$("#exact").change(function(event){
 		oss.exact = $(this).is(":checked");
+		saveStateToLocalStorage();
 		if( $("#query").val() ) {
 			$("#search").submit();
 		}
-		saveStateToLocalStorage();
 	});
 	
 
