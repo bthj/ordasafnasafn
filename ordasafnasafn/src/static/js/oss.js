@@ -43,10 +43,6 @@ $(function(){
 		var hostUrl = "http://oss.nemur.net/";
 		var localePathPrefix = "lang";
 		
-		$("a[rel*=external]").live('click', function(event){	
-			navigator.app.loadUrl($(this).attr('href'), {openexternal:true});
-			return false;
-		});
 		
 		$("div#oss").live('pageshow', function(event,ui){
 			// let's open a dialog with data charges alert if not opened before
@@ -257,7 +253,7 @@ $(function(){
 									textLegend = oneEntry.textlegend;
 								}
 								if( oneEntry.link ) {
-									var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank" rel="external">', '</a></li>'];
+									var litemParts = ['<li><a href="'+oneEntry.link+'" target="_blank">', '</a></li>'];
 									if( oneEntry.html ) {
 										litems.push( litemParts.join( oneEntry.html ) );
 									} else {
