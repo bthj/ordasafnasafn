@@ -211,12 +211,14 @@ $(function(){
 				var nestedListLink = $(this).find("a:first");
 				$(this).remove();
 				// hack to remove divs for nested lists from previous results - should be removed by the JQM framework?
-				var dataUrl = nestedListLink.attr("href").substring(1);
-				$("div[data-role=page]").each(function(){
-					if( $(this).attr("data-url") == dataUrl ) {
-						$(this).remove();
-					}
-				});
+				if( nestedListLink.length > 0 ) {
+					var dataUrl = nestedListLink.attr("href").substring(1);
+					$("div[data-role=page]").each(function(){
+						if( $(this).attr("data-url") == dataUrl ) {
+							$(this).remove();
+						}
+					});					
+				}
 			});
 
 //			$wordBank.find(".results").remove();
@@ -286,9 +288,12 @@ $(function(){
 								});
 								
 								var ul = $('<ul/>', {
-									html: litems.join('')
+									html: litems.join(''),
+									style: 'display:none;'
 								});
+								// from https://raw.github.com/arschmitz/jquery-mobile-nestedlists/master/jquery.mobile.nestedlists.js
 								liResults.append(ul);
+								liResults.addClass("ui-btn ui-btn-icon-right ui-icon-carat-r");
 	
 								$wordBank.append( liResults );
 							} else if( $wordBank.find("li[class=results]").size() < 1 ) {
@@ -297,6 +302,8 @@ $(function(){
 						});
 					}
 					$wordBank.listview("refresh");
+					//$wordBank.listview.trigger("create");
+					//$wordBank.trigger("create");
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					$wordBank.find("h4").html('<em style="color:DarkRed;">Villa kom upp.</em>');

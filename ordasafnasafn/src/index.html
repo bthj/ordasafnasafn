@@ -13,12 +13,14 @@
 	<link rel="apple-touch-icon" href="/static/img/oss_128x128.png"/>
 	<link rel="apple-touch-icon-precomposed" href="/static/img/oss_128x128.png"/>
 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css" />
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.css" />
 	<script type="text/javascript" src="/static/js/bookmark_bubble2.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	<script src="/static/js/jquery.localize.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" src="/static/js/oss.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
+	<script src="/static/js/jquery.mobile.nestedlists.js"></script>
+
 	
 	
 	<style type="text/css">
@@ -28,7 +30,8 @@
 		}
 		div.ui-slider-switch {
 		    position: absolute;
-		    right: 0;
+		    right: 5px;
+		    top: 5px;
 		    width: 40%;
 		}
 
@@ -38,11 +41,11 @@
 			float:right;
 		}
 		
-		.ui-icon-oss-link {
+		.ui-icon-oss-link:after {
 			background-image: url("/static/img/app-icon-link.png");
 		}
 		@media only screen and (-webkit-min-device-pixel-ratio: 2) {
-			.ui-icon-oss-link {
+			.ui-icon-oss-link:after {
 				background-image: url("/static/img/app-icon-link-highres.png");
 				background-size: 18px 18px;
 			}
@@ -78,7 +81,7 @@
 			  <input type="search" name="q" id="query" value="" data-inline="true" />
 			  <label for="query">
 			  	<a href="/" target="_blank" id="searchlink" data-role="button" 
-			  			data-icon="oss-link" data-iconpos="notext" data-theme="d"
+			  			data-icon="star" data-iconpos="notext" data-theme="d"
 			  			rel="localize[searchLink]">
 			  		{{searchLink}}
 			  	</a>

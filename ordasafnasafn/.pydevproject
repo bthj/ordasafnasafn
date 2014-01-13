@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?eclipse-pydev version="1.0"?>
-
-<pydev_project>
+<?eclipse-pydev version="1.0"?><pydev_project>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/ordasafnasafn/src</path>
 </pydev_pathproperty>
@@ -12,17 +10,9 @@
 <key>GOOGLE_APP_ENGINE</key>
 <value>/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine</value>
 </pydev_variables_property>
+
 <pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
 <path>${GOOGLE_APP_ENGINE}</path>
-<path>${GOOGLE_APP_ENGINE}/lib/antlr3</path>
-<path>${GOOGLE_APP_ENGINE}/lib/django_1_2</path>
-<path>${GOOGLE_APP_ENGINE}/lib/fancy_urllib</path>
-<path>${GOOGLE_APP_ENGINE}/lib/graphy</path>
-<path>${GOOGLE_APP_ENGINE}/lib/ipaddr</path>
-<path>${GOOGLE_APP_ENGINE}/lib/protorpc</path>
-<path>${GOOGLE_APP_ENGINE}/lib/simplejson</path>
-<path>${GOOGLE_APP_ENGINE}/lib/yaml/lib</path>
-<path>${GOOGLE_APP_ENGINE}/lib/webob</path>
-<path>${GOOGLE_APP_ENGINE}/lib/webapp2</path>
+<path>${GOOGLE_APP_ENGINE}/lib/webapp2-2.5.2</path>
 </pydev_pathproperty>
 </pydev_project>
