@@ -1,0 +1,1 @@
+To enable searching multiple Icelandic online dictionaries (wordbanks) in one go.
